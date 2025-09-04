@@ -1,10 +1,11 @@
 import * as React from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { motion, AnimatePresence, useInView, cubicBezier } from "framer-motion";
 import { slideContainer, titleStyle } from "../../styles/slideStyles";
 
-/** Easings */
-const EASE_SOFT: number[] = [0.2, 0.65, 0.3, 0.9];
-const EASE_OUT: number[] = [0.16, 1, 0.3, 1];
+/** Easings (use EasingFunction via cubicBezier to satisfy TS) */
+const EASE_SOFT = cubicBezier(0.2, 0.65, 0.3, 0.9);
+const EASE_OUT = cubicBezier(0.16, 1, 0.3, 1);
+const LINEAR = (t: number) => t;
 
 /** Stages */
 const STAGES = ["prompt", "draft", "review", "result"] as const;
@@ -69,7 +70,7 @@ function useAutoplay(maxStage: number, enabled: boolean, ms = 3400) {
   return { idx, setIdx };
 }
 
-/** Typing effect once, then locks */
+/** Typing effect once, then locks (remount with key to reset) */
 const TypingOnce: React.FC<{ text: string; speed?: number; onDone?: () => void; active: boolean }> = ({
   text,
   speed = 22,
@@ -117,7 +118,7 @@ const CodeBlock: React.FC<{ children: React.ReactNode; accent?: string; ariaLabe
       background: "#0b1220",
       color: "#e5e7eb",
       borderRadius: 14,
-      padding: "14px 16px",
+      padding: "16px 18px",
       fontFamily:
         "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
       fontSize: 14,
@@ -126,7 +127,7 @@ const CodeBlock: React.FC<{ children: React.ReactNode; accent?: string; ariaLabe
       border: `1px solid ${accent}33`,
       position: "relative",
       overflow: "auto",
-      maxHeight, // keeps content inside slide
+      maxHeight,
       width: "100%",
     }}
   >
@@ -166,7 +167,7 @@ const StaggerList: React.FC<{ items: string[]; active: boolean }> = ({ items, ac
 
 const Slide16: React.FC = () => {
   const rootRef = React.useRef<HTMLDivElement | null>(null);
-  const inView = useInView(rootRef, { amount: 0.6, margin: "0px" }); // start when ≥60% on screen
+  const inView = useInView(rootRef, { amount: 0.6, margin: "0px", once: false }); // gate everything
   const pageVisible = useDocumentVisible();
 
   // Hover to pause
@@ -174,6 +175,9 @@ const Slide16: React.FC = () => {
 
   // Prompt lock after typing
   const [promptLocked, setPromptLocked] = React.useState(false);
+
+  // Force re-mount of TypingOnce when we re-enter view so it types again
+  const [startCycle, setStartCycle] = React.useState(0);
 
   // Autoplay runs only when slide is visible, tab visible, not hover-paused, AND prompt has finished typing
   const autoplayEnabled = inView && pageVisible && !hoverPaused && promptLocked;
@@ -191,8 +195,9 @@ const Slide16: React.FC = () => {
   React.useEffect(() => {
     if (inView && pageVisible && !hasStartedRef.current) {
       hasStartedRef.current = true;
-      setIdx(0);           // begin at "prompt"
-      setPromptLocked(false);
+      setIdx(0);                 // begin at "prompt"
+      setPromptLocked(false);    // allow typing again
+      setStartCycle((k) => k + 1); // re-mount TypingOnce
     }
     if (!inView) {
       hasStartedRef.current = false; // allow restart on re-entry
@@ -207,6 +212,9 @@ const Slide16: React.FC = () => {
     }
   }, [promptLocked, idx, inView, pageVisible, hoverPaused, setIdx]);
 
+  // If slide goes off-screen, pause and reset progress bar feeling
+  const progressActive = inView && pageVisible && !hoverPaused;
+
   return (
     <motion.div
       ref={rootRef}
@@ -217,7 +225,7 @@ const Slide16: React.FC = () => {
       style={{
         ...slideContainer,
         background: "linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)",
-        padding: "36px 56px",
+        padding: "40px 64px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -228,13 +236,13 @@ const Slide16: React.FC = () => {
     >
       {/* Title */}
       <motion.h2
-        initial={{ y: -16, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        initial={false}
+        animate={inView ? { y: 0, opacity: 1 } : { y: -16, opacity: 0 }}
         transition={{ duration: 0.7, ease: EASE_SOFT }}
         style={{
           ...titleStyle,
-          fontSize: "3.2rem",
-          marginBottom: 10,
+          fontSize: "3.4rem",
+          marginBottom: 12,
           background:
             "linear-gradient(90deg, #6366f1, #3b82f6, #10b981, #f59e0b)",
           WebkitBackgroundClip: "text",
@@ -247,9 +255,9 @@ const Slide16: React.FC = () => {
 
       {/* Narration bar */}
       <motion.div
-        key={stage}
+        key={stage + String(startCycle)}
         initial={{ y: -6, opacity: 0, scale: 0.98 }}
-        animate={{ y: 0, opacity: 1, scale: 1 }}
+        animate={{ y: inView ? 0 : -6, opacity: inView ? 1 : 0, scale: 1 }}
         transition={{ duration: 0.35, ease: EASE_SOFT }}
         style={{
           display: "flex",
@@ -258,10 +266,10 @@ const Slide16: React.FC = () => {
           background: "rgba(255,255,255,0.98)",
           border: "1px solid rgba(0,0,0,0.06)",
           borderRadius: 14,
-          padding: "10px 14px",
-          boxShadow: "0 10px 22px rgba(0,0,0,0.10)",
-          marginBottom: 12,
-          maxWidth: 980,
+          padding: "12px 16px",
+          boxShadow: "0 12px 26px rgba(0,0,0,0.10)",
+          marginBottom: 14,
+          maxWidth: 1180,
           width: "100%",
         }}
       >
@@ -307,9 +315,9 @@ const Slide16: React.FC = () => {
           }}
         >
           <motion.div
-            key={`progress-${stage}`}
+            key={`progress-${stage}-${progressActive}`}
             initial={{ width: "0%" }}
-            animate={{ width: "100%" }}
+            animate={{ width: progressActive ? "100%" : "0%" }}
             transition={{ duration: 2.4, ease: EASE_SOFT }}
             style={{
               height: "100%",
@@ -334,27 +342,27 @@ const Slide16: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Three panels */}
+      {/* Three panels (slightly larger, wider grid) */}
       <div
         style={{
           width: "100%",
-          maxWidth: 1100,
+          maxWidth: 1180,
           display: "grid",
           gridTemplateColumns: "1fr 1fr 1fr",
-          gap: 16,
+          gap: 20,
           alignItems: "stretch",
         }}
       >
-        {/* Panel A: Prompt (always visible and stays) */}
+        {/* Panel A: Prompt */}
         <motion.div
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
+          initial={false}
+          animate={inView ? { y: 0, opacity: 1 } : { y: 10, opacity: 0 }}
           transition={{ duration: 0.45, ease: EASE_SOFT }}
           style={{
             background: "white",
             borderRadius: 16,
-            padding: 16,
-            boxShadow: "0 10px 22px rgba(0,0,0,0.10)",
+            padding: 20,
+            boxShadow: "0 12px 26px rgba(0,0,0,0.10)",
             border: "1px solid rgba(0,0,0,0.06)",
             display: "flex",
             flexDirection: "column",
@@ -376,10 +384,12 @@ const Slide16: React.FC = () => {
               boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6)",
             }}
           >
+            {/* Remount on startCycle so typing restarts on re-entry */}
             <TypingOnce
+              key={startCycle}
               text={PROMPT_TEXT}
               onDone={() => setPromptLocked(true)}
-              active={inView && pageVisible} // type only when slide is visible
+              active={inView && pageVisible}
             />
           </div>
 
@@ -396,19 +406,19 @@ const Slide16: React.FC = () => {
 
         {/* Panel B: AI Draft + AI feel */}
         <motion.div
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
+          initial={false}
+          animate={inView ? { y: 0, opacity: 1 } : { y: 10, opacity: 0 }}
           transition={{ duration: 0.5, ease: EASE_SOFT }}
           style={{
             background: "white",
             borderRadius: 16,
-            padding: 16,
-            boxShadow: "0 10px 22px rgba(0,0,0,0.10)",
+            padding: 20,
+            boxShadow: "0 12px 26px rgba(0,0,0,0.10)",
             border: "1px solid rgba(0,0,0,0.06)",
             display: "flex",
             flexDirection: "column",
             gap: 12,
-            minHeight: 260,
+            minHeight: 280,
             position: "relative",
             overflow: "hidden",
             minWidth: 0,
@@ -424,7 +434,7 @@ const Slide16: React.FC = () => {
             transition={{
               duration: 2.1,
               repeat: isDraft && inView && pageVisible && !hoverPaused ? Infinity : 0,
-              ease: "linear",
+              ease: LINEAR,
             }}
             style={{
               position: "absolute",
@@ -460,13 +470,13 @@ const Slide16: React.FC = () => {
           <AnimatePresence mode="wait">
             {(isDraft || isReview || isResult) && (
               <motion.div
-                key="ai-draft-code"
+                key={"ai-draft-code-" + startCycle}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.35, ease: EASE_SOFT }}
               >
-                <CodeBlock ariaLabel="AI draft code" accent="#6366f1" maxHeight={240}>
+                <CodeBlock ariaLabel="AI draft code" accent="#6366f1" maxHeight={260}>
                   {AI_DRAFT_PY}
                 </CodeBlock>
               </motion.div>
@@ -486,14 +496,14 @@ const Slide16: React.FC = () => {
 
         {/* Panel C: Refined code & output */}
         <motion.div
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
+          initial={false}
+          animate={inView ? { y: 0, opacity: 1 } : { y: 10, opacity: 0 }}
           transition={{ duration: 0.55, ease: EASE_SOFT }}
           style={{
             background: "white",
             borderRadius: 16,
-            padding: 16,
-            boxShadow: "0 10px 22px rgba(0,0,0,0.10)",
+            padding: 20,
+            boxShadow: "0 12px 26px rgba(0,0,0,0.10)",
             border: "1px solid rgba(0,0,0,0.06)",
             display: "flex",
             flexDirection: "column",
@@ -506,13 +516,13 @@ const Slide16: React.FC = () => {
           <AnimatePresence mode="wait">
             {(isReview || isResult) && (
               <motion.div
-                key="refined-code"
+                key={"refined-code-" + startCycle}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.35, ease: EASE_SOFT }}
               >
-                <CodeBlock ariaLabel="Refined code" accent="#10b981" maxHeight={240}>
+                <CodeBlock ariaLabel="Refined code" accent="#10b981" maxHeight={260}>
                   {REFINED_PY}
                 </CodeBlock>
               </motion.div>
@@ -522,20 +532,20 @@ const Slide16: React.FC = () => {
           {/* Human review bullets appear during review/result */}
           <StaggerList items={REVIEW_NOTES} active={isReview || isResult} />
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, minWidth: 0 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, minWidth: 0 }}>
             <div
               style={{
                 background: "#f8fafc",
                 border: "1px solid #e2e8f0",
                 borderRadius: 10,
-                padding: 10,
+                padding: 12,
                 fontSize: 13,
                 color: "#0f172a",
                 minWidth: 0,
               }}
             >
               <div style={{ fontWeight: 700, marginBottom: 6 }}>Sample Input</div>
-              <CodeBlock ariaLabel="Sample input" accent="#94a3b8" maxHeight={120}>
+              <CodeBlock ariaLabel="Sample input" accent="#94a3b8" maxHeight={132}>
                 {SAMPLE_INPUT}
               </CodeBlock>
             </div>
@@ -545,7 +555,7 @@ const Slide16: React.FC = () => {
                 background: "#fff7ed",
                 border: "1px solid #fed7aa",
                 borderRadius: 10,
-                padding: 10,
+                padding: 12,
                 fontSize: 13,
                 color: "#0f172a",
                 minWidth: 0,
@@ -555,7 +565,7 @@ const Slide16: React.FC = () => {
               <AnimatePresence mode="wait">
                 {isResult ? (
                   <motion.div
-                    key="final-output"
+                    key={"final-output-" + startCycle}
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -6 }}
@@ -572,7 +582,7 @@ const Slide16: React.FC = () => {
                       maxWidth: "100%",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
-                      whiteSpace: "nowrap", // keep it tidy inside panel
+                      whiteSpace: "nowrap",
                     }}
                     title={SAMPLE_OUTPUT}
                   >
@@ -580,7 +590,7 @@ const Slide16: React.FC = () => {
                   </motion.div>
                 ) : (
                   <motion.div
-                    key="placeholder-output"
+                    key={"placeholder-output-" + startCycle}
                     initial={{ opacity: 0.6 }}
                     animate={{ opacity: 0.6 }}
                     style={{
@@ -620,14 +630,14 @@ const Slide16: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Controls (optional manual nav) */}
+      {/* Controls (manual nav) */}
       <div
         style={{
           display: "flex",
           gap: 10,
           alignItems: "center",
           justifyContent: "center",
-          marginTop: 12,
+          marginTop: 14,
         }}
       >
         <button

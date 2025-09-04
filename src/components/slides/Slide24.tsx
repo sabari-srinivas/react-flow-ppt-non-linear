@@ -1,5 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useAnimation, AnimatePresence, useInView } from 'framer-motion';
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 
 // Inlined styles to remove external dependencies
 const slideContainer: React.CSSProperties = {
@@ -16,6 +18,38 @@ type Step = {
   emoji: string;
 };
 
+// Content for the steps in the workflow
+const STEPS: Step[] = [
+  { id: 1, label: 'Perceive', labelKey: 'perceive', emoji: '👀' } as any,
+  { id: 2, label: 'Plan',     labelKey: 'plan',     emoji: '📝' } as any,
+  { id: 3, label: 'Act',      labelKey: 'act',      emoji: '⚙️' } as any,
+  { id: 4, label: 'Report',   labelKey: 'report',   emoji: '✅' } as any,
+] as unknown as Step[];
+
+// 2–3 concise lines per phase, shown cumulatively
+const STEP_CONTENT: string[][] = [
+  [
+    'Read user intent & constraints.',
+    'Pull recent orders and preferences.',
+    'Detect gaps to clarify if needed.',
+  ],
+  [
+    'Pick store, slot, and coupon strategy.',
+    'Sequence tasks across roles.',
+    'Estimate time & total cost.',
+  ],
+  [
+    'Prepare items & package carefully.',
+    'Schedule pickup and dispatch driver.',
+    'Execute payment & confirmations.',
+  ],
+  [
+    'Summarize order, savings, and ETA.',
+    'Share tracking link & receipt.',
+    'Offer “repeat next week”.',
+  ],
+];
+
 type Agent = {
   id: number;
   name: string;
@@ -23,15 +57,7 @@ type Agent = {
   tasks: string[]; // Tasks per step, indexed the same as STEPS
 };
 
-// Content for the steps in the workflow
-const STEPS: Step[] = [
-  { id: 1, label: 'Perceive', emoji: '👀' },
-  { id: 2, label: 'Plan', emoji: '📝' },
-  { id: 3, label: 'Act', emoji: '⚙️' },
-  { id: 4, label: 'Report', emoji: '✅' },
-];
-
-// Content for the different agents
+// (kept for the typed panel)
 const AGENTS: Agent[] = [
   {
     id: 1,
@@ -69,7 +95,6 @@ const AGENTS: Agent[] = [
 ];
 
 const EASE = [0.2, 0.8, 0.2, 1] as const;
-const EMOJI_HALF = 16; // fontSize 32 -> half width ~16px for centering
 
 // A reusable styled chip component for displaying the current step
 const StepChip = ({ label, active, idx }: { label: string; active: boolean; idx: number }) => (
@@ -81,7 +106,7 @@ const StepChip = ({ label, active, idx }: { label: string; active: boolean; idx:
       scale: active ? 1.05 : 1,
       boxShadow: active ? '0 10px 20px rgba(255,46,99,0.25)' : '0 6px 14px rgba(0,0,0,0.08)',
     }}
-    transition={{ duration: 0.3, ease: EASE }}
+    transition={{ duration: 0.5, ease: EASE }}
     style={{
       padding: '6px 12px',
       borderRadius: 999,
@@ -98,52 +123,21 @@ const StepChip = ({ label, active, idx }: { label: string; active: boolean; idx:
   </motion.div>
 );
 
-// Small helper for cyclic index math (also used in tests)
+// Small helper for cyclic index math
 export function nextIndex(current: number, len: number) {
   return (current + 1) % Math.max(1, len);
 }
 
 const MultiAgentSlide: React.FC = () => {
-  const [activeStepIdx, setActiveStepIdx] = useState(0);
+  const [activeStepIdx, setActiveStepIdx] = useState(0); // 0..3
   const [typedText, setTypedText] = useState('');
   const [typingDone, setTypingDone] = useState(false);
   const [isPaused, setPaused] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const inView = useInView(containerRef, { amount: 0.5 });
 
-  const agentControls = AGENTS.map(() => useAnimation());
-  const positions = useMemo(() => ({ centers: [] as number[], width: 0 }), []);
-
-  // Measures the center position of each step card for agent animation & arrows
-  const measure = React.useCallback(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const cRect = container.getBoundingClientRect();
-    positions.centers = [];
-    positions.width = cRect.width;
-    cardsRef.current.forEach((el) => {
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      positions.centers.push(r.left - cRect.left + r.width / 2);
-    });
-
-    // Re-center agents immediately on resize to avoid drift
-    if (positions.centers.length) {
-      const cx = positions.centers[activeStepIdx] - EMOJI_HALF;
-      agentControls.forEach((ctrl) => ctrl.start({ x: cx, transition: { duration: 0 } }));
-    }
-  }, [positions, activeStepIdx, agentControls]);
-
-  useEffect(() => {
-    measure();
-    const ro = new ResizeObserver(measure);
-    if (containerRef.current) ro.observe(containerRef.current);
-    return () => ro.disconnect();
-  }, [measure]);
-
-  // Controls the typewriter effect in the bottom panel
+  // Typewriter panel: current phase task lines across agents
   useEffect(() => {
     if (!inView) return;
     const lines = AGENTS.map((agent) => `${agent.emoji} ${agent.name}: ${agent.tasks[activeStepIdx]}`);
@@ -159,107 +153,22 @@ const MultiAgentSlide: React.FC = () => {
         clearInterval(id);
         setTypingDone(true);
       }
-    }, 12);
+    }, 14);
     return () => clearInterval(id);
   }, [activeStepIdx, inView]);
 
-  // Ensure agents start centered on the first step once measured
-  useEffect(() => {
-    if (!inView || positions.centers.length === 0) return;
-    const x = positions.centers[activeStepIdx] - EMOJI_HALF;
-    agentControls.forEach((ctrl) => ctrl.start({ x, y: 0, scale: 1, transition: { duration: 0 } }));
-  }, [inView, positions.centers.length]);
-
-  // Main animation loop for the agents
+  // Main loop: cycle steps
   useEffect(() => {
     if (!inView) return;
-
     let step = activeStepIdx;
-    const intervalId = setInterval(async () => {
-      if (isPaused || positions.centers.length === 0) return;
-      step = nextIndex(step, STEPS.length); // cyclic
+    const dwell = 2400; // ms per phase
+    const id = setInterval(() => {
+      if (isPaused) return;
+      step = nextIndex(step, STEPS.length);
       setActiveStepIdx(step);
-
-      const targetX = positions.centers[step] - EMOJI_HALF;
-      const moveAnimations = AGENTS.map((_, i) =>
-        agentControls[i].start({
-          x: targetX,
-          y: [0, -28, 0], // arc motion
-          scale: 1,
-          transition: { duration: 0.7, delay: 0.08 + i * 0.08, ease: EASE },
-        })
-      );
-      await Promise.all(moveAnimations);
-    }, 2400);
-
-    return () => clearInterval(intervalId);
-  }, [inView, isPaused, positions, agentControls, activeStepIdx]);
-
-  // Arrow layer draws dynamic paths from card center -> next card center + wrap-around
-  const ArrowLayer: React.FC = () => {
-    if (positions.centers.length < 4) return null;
-    const yTop = 72;
-    const yBottom = 104;
-
-    const forward = positions.centers.slice(0, -1).map((c, i) => {
-      const n = positions.centers[i + 1];
-      const d = `M ${c} ${yTop} C ${c + (n - c) * 0.25} ${yTop - 40}, ${c + (n - c) * 0.75} ${yTop + 40}, ${n} ${yTop}`;
-      return { d, i };
-    });
-
-    const last = positions.centers[positions.centers.length - 1];
-    const first = positions.centers[0];
-    const wrapD = `M ${last} ${yTop} C ${last - (last - first) * 0.15} ${yBottom + 20}, ${first + (last - first) * 0.15} ${yBottom + 20}, ${first} ${yTop}`;
-
-    return (
-      <svg
-        width="100%"
-        height={140}
-        viewBox={`0 0 ${positions.width} 140`}
-        preserveAspectRatio="none"
-        style={{ position: 'absolute', left: 0, right: 0, top: 24, height: 120, pointerEvents: 'none', opacity: 0.95 }}
-      >
-        <defs>
-          <linearGradient id="arrow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#ff2e63" />
-            <stop offset="100%" stopColor="#ff9f43" />
-          </linearGradient>
-        </defs>
-
-        {/* Forward arrows */}
-        {forward.map(({ d, i }) => (
-          <g key={`f-${i}`}>
-            <path d={d} fill="none" stroke="#e2e8f0" strokeWidth={3} strokeDasharray="6 6" />
-            <motion.path
-              d={d}
-              fill="none"
-              stroke="url(#arrow-gradient)"
-              strokeWidth={3}
-              strokeDasharray="6 6"
-              initial={false}
-              animate={{ pathLength: activeStepIdx > i ? 1 : 0, opacity: activeStepIdx > i ? 1 : 0 }}
-              transition={{ duration: 0.7, ease: EASE }}
-            />
-          </g>
-        ))}
-
-        {/* Wrap arrow for cyclic transition (Report -> Perceive) */}
-        <g key="wrap">
-          <path d={wrapD} fill="none" stroke="#e2e8f0" strokeWidth={3} strokeDasharray="6 6" />
-          <motion.path
-            d={wrapD}
-            fill="none"
-            stroke="url(#arrow-gradient)"
-            strokeWidth={3}
-            strokeDasharray="6 6"
-            initial={false}
-            animate={{ pathLength: activeStepIdx === 0 ? 1 : 0, opacity: activeStepIdx === 0 ? 1 : 0 }}
-            transition={{ duration: 0.7, ease: EASE }}
-          />
-        </g>
-      </svg>
-    );
-  };
+    }, dwell);
+    return () => clearInterval(id);
+  }, [inView, isPaused, activeStepIdx]);
 
   return (
     <div
@@ -288,7 +197,7 @@ const MultiAgentSlide: React.FC = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.6 }}
       >
-        Watch {AGENTS[0].emoji}, {AGENTS[1].emoji}, and {AGENTS[2].emoji} collaborate to fulfill an order. Each agent completes its tasks at every step: <b>Perceive → Plan → Act → Report</b>.
+        Watch 🧑‍💼, 👨‍🍳, and 🚗 collaborate. Each step builds on the last: <b>Perceive → Plan → Act → Report</b>.
       </motion.p>
 
       {/* Step chips */}
@@ -307,7 +216,7 @@ const MultiAgentSlide: React.FC = () => {
         style={{
           position: 'relative',
           width: 'min(980px, 95vw)',
-          minHeight: 280,
+          minHeight: 320,
           padding: '56px 24px 100px',
           borderRadius: 16,
           background: 'linear-gradient(#f8fafc,#eef2f7)',
@@ -316,6 +225,7 @@ const MultiAgentSlide: React.FC = () => {
           overflow: 'hidden',
         }}
       >
+        {/* Step cards with stronger active shadow + glow pulse + cumulative content */}
         <div
           style={{
             display: 'flex',
@@ -324,49 +234,79 @@ const MultiAgentSlide: React.FC = () => {
             flexWrap: 'wrap',
           }}
         >
-          {STEPS.map((step, i) => (
-            <motion.div
-              key={step.id}
-              ref={(el) => (cardsRef.current[i] = el)}
-              animate={{
-                y: activeStepIdx === i ? -6 : 0,
-                scale: activeStepIdx === i ? 1.05 : 1,
-                boxShadow: activeStepIdx === i ? '0 16px 36px rgba(255,46,99,0.18)' : '0 10px 24px rgba(0,0,0,0.08)',
-                borderColor: activeStepIdx === i ? 'rgba(255,46,99,0.35)' : 'rgba(0,0,0,0.06)',
-              }}
-              transition={{ duration: 0.4, ease: EASE }}
-              style={{
-                flex: '1 1 200px', minWidth: 200, maxWidth: 220, borderRadius: 14,
-                background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)', padding: 14,
-                textAlign: 'center', position: 'relative',
-              }}
-            >
-              <div style={{ fontSize: 28 }}>{step.emoji}</div>
-              <div style={{ fontWeight: 800, marginTop: 6, color: '#0f172a' }}>{step.label}</div>
-            </motion.div>
-          ))}
+          {STEPS.map((step, i) => {
+            const active = activeStepIdx === i;
+            const revealed = activeStepIdx >= i; // cumulative reveal
+            return (
+              <motion.div
+                key={step.id}
+                initial={false}
+                animate={{
+                  y: active ? -6 : 0,
+                  scale: active ? 1.03 : 1,
+                  boxShadow: active
+                    ? '0 32px 80px rgba(255,46,99,0.35), 0 10px 24px rgba(0,0,0,0.12)'
+                    : '0 8px 18px rgba(0,0,0,0.08)',
+                  borderColor: active ? 'rgba(255,46,99,0.5)' : 'rgba(0,0,0,0.06)',
+                }}
+                transition={{ duration: 0.4, ease: EASE }}
+                style={{
+                  flex: '1 1 200px',
+                  minWidth: 200,
+                  maxWidth: 220,
+                  borderRadius: 14,
+                  background: '#ffffff',
+                  border: '1px solid rgba(0,0,0,0.06)',
+                  padding: 14,
+                  textAlign: 'center',
+                  position: 'relative',
+                }}
+              >
+                {/* Glow pulse overlay */}
+                <motion.div
+                  animate={active ? { opacity: [0.4, 0.18, 0.4], scale: [1, 1.05, 1] } : { opacity: 0 }}
+                  transition={{ duration: 2.0, repeat: active ? Infinity : 0, ease: 'easeInOut' }}
+                  style={{
+                    position: 'absolute',
+                    inset: -8,
+                    borderRadius: 16,
+                    background: 'radial-gradient(circle, rgba(255,46,99,0.22), transparent 70%)',
+                    pointerEvents: 'none',
+                  }}
+                />
+
+                <div style={{ fontSize: 28 }}>{step.emoji}</div>
+                <div style={{ fontWeight: 800, marginTop: 6, color: '#0f172a' }}>{step.label}</div>
+
+                {/* Cumulative content: appears once the phase is reached, then stays */}
+                <AnimatePresence initial={false}>
+                  {revealed && (
+                    <motion.ul
+                      key={`content-${i}-${revealed}`}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.35, ease: EASE }}
+                      style={{
+                        listStyle: 'none',
+                        padding: 0,
+                        margin: '10px 0 0 0',
+                        color: '#475569',
+                        fontSize: 13,
+                        lineHeight: 1.45,
+                        textAlign: 'left',
+                      }}
+                    >
+                      {STEP_CONTENT[i].slice(0, 3).map((line, k) => (
+                        <li key={k} style={{ marginTop: k === 0 ? 0 : 6 }}>• {line}</li>
+                      ))}
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
         </div>
-
-        {/* Dynamic Flow arrows */}
-        <ArrowLayer />
-
-        {/* Animating Agents */}
-        {AGENTS.map((agent, i) => (
-          <motion.div
-            key={agent.id}
-            animate={agentControls[i]}
-            style={{
-              position: 'absolute',
-              top: 8 + i * 40,
-              left: 0,
-              fontSize: 32,
-              textShadow: '0 4px 8px rgba(0,0,0,0.15)',
-              zIndex: 3,
-            }}
-          >
-            {agent.emoji}
-          </motion.div>
-        ))}
 
         {/* Example Panel */}
         <div style={{ position: 'absolute', left: 16, right: 16, bottom: 12, display: 'flex', justifyContent: 'center' }}>
@@ -376,12 +316,21 @@ const MultiAgentSlide: React.FC = () => {
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -6, opacity: 0 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
               style={{
-                background: 'rgba(17,24,39,0.9)', color: '#e5e7eb', border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 12, padding: '12px 14px', minWidth: 300, maxWidth: 740, width: '90%',
-                boxShadow: '0 12px 24px rgba(0,0,0,0.25)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-                fontSize: 13.5, lineHeight: 1.5, textAlign: 'left',
+                background: 'rgba(17,24,39,0.9)',
+                color: '#e5e7eb',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 12,
+                padding: '12px 14px',
+                minWidth: 300,
+                maxWidth: 740,
+                width: '90%',
+                boxShadow: '0 12px 24px rgba(0,0,0,0.25)',
+                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+                fontSize: 13.5,
+                lineHeight: 1.5,
+                textAlign: 'left',
               }}
             >
               <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
@@ -397,35 +346,13 @@ const MultiAgentSlide: React.FC = () => {
 };
 
 // --- Lightweight Runtime Tests (opt-in) ---
-// These do not run automatically. Call runSanityTests() from your app to see results in console.
 export function runSanityTests() {
   const results: { name: string; pass: boolean; info?: string }[] = [];
-
-  // Test: nextIndex cycles correctly
   results.push({ name: 'nextIndex wraps 3->0 for len=4', pass: nextIndex(3, 4) === 0 });
   results.push({ name: 'nextIndex of 0->1', pass: nextIndex(0, 4) === 1 });
-
-  // Test: centers computed from rects
-  const containerLeft = 0;
-  const cardLeft = 10, cardWidth = 100;
-  const center = cardLeft - containerLeft + cardWidth / 2; // 60
-  results.push({ name: 'center calc basic', pass: center === 60, info: `got ${center}` });
-
-  // Test: Arrow path string shape
-  const sampleC = 100, sampleN = 300, yTop = 72;
-  const d = `M ${sampleC} ${yTop} C ${sampleC + (sampleN - sampleC) * 0.25} ${yTop - 40}, ${sampleC + (sampleN - sampleC) * 0.75} ${yTop + 40}, ${sampleN} ${yTop}`;
-  results.push({ name: 'arrow path starts with M', pass: d.startsWith('M ') });
-
-  // Test: Agents count equals tasks array lengths
   const allHave4 = AGENTS.every((a) => a.tasks.length === STEPS.length);
   results.push({ name: 'each agent has tasks for all steps', pass: allHave4 });
-
-  // Log to console for quick visibility
-  if (typeof window !== 'undefined') {
-    // eslint-disable-next-line no-console
-    console.table(results);
-  }
-
+  if (typeof window !== 'undefined') console.table(results);
   return results;
 }
 

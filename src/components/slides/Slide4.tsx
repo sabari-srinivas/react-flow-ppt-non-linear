@@ -49,8 +49,13 @@ export default function Slide4() {
   leftRefs.current = []
   rightRefs.current = []
 
-  const setLeftRef = (el: HTMLDivElement | null) => el && leftRefs.current.push(el)
-  const setRightRef = (el: HTMLDivElement | null) => el && rightRefs.current.push(el)
+  // FIX 1: Ensure the ref callback function returns void.
+  const setLeftRef = (el: HTMLDivElement | null) => {
+    if (el) leftRefs.current.push(el)
+  }
+  const setRightRef = (el: HTMLDivElement | null) => {
+    if (el) rightRefs.current.push(el)
+  }
 
   const [connectors, setConnectors] = useState<Conn[]>([])
 
@@ -133,14 +138,16 @@ export default function Slide4() {
     show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.25 } },
   }), [])
 
+  // FIX 2: Add 'as const' to the 'ease' property to satisfy Framer Motion's Easing type.
   const leftItemVariants = useMemo(() => ({
     hidden: { opacity: 0, x: -40, rotate: -1 },
-    show: { opacity: 1, x: 0, rotate: 0, transition: { duration: 0.55, ease: 'easeOut' } },
+    show: { opacity: 1, x: 0, rotate: 0, transition: { duration: 0.55, ease: 'easeOut' as const } },
   }), [])
 
+  // FIX 3: Add 'as const' to the 'ease' property.
   const rightItemVariants = useMemo(() => ({
     hidden: { opacity: 0, x: 40, rotate: 1 },
-    show: { opacity: 1, x: 0, rotate: 0, transition: { duration: 0.55, ease: 'easeOut' } },
+    show: { opacity: 1, x: 0, rotate: 0, transition: { duration: 0.55, ease: 'easeOut' as const } },
   }), [])
 
   const floatAnim = {
@@ -170,7 +177,7 @@ export default function Slide4() {
           zIndex: 20,
         }}
       >
-        Human vs GPT
+        2 Neural Networks
       </motion.h1>
 
       {/* SVG CONNECTORS */}

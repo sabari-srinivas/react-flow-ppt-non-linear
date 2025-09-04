@@ -1,5 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useAnimation, AnimatePresence, useInView } from 'framer-motion';
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { slideContainer } from '../../styles/slideStyles';
 
 type Step = {
@@ -7,7 +9,7 @@ type Step = {
   label: string;
   emoji: string;
   caption: string;
-  exampleLines: string[]; // typed into the example panel
+  exampleLines: string[];
 };
 
 const STEPS: Step[] = [
@@ -19,7 +21,7 @@ const STEPS: Step[] = [
     exampleLines: [
       'You: “Order my weekly groceries for tomorrow morning.”',
       'Notes: Family of 3. Budget ₹2,500.',
-      'Items: milk, bread, eggs, tomatoes, spinach, rice.'
+      'Items: milk, bread, eggs, tomatoes, spinach, rice.',
     ],
   },
   {
@@ -33,7 +35,7 @@ const STEPS: Step[] = [
       '• Availability: All items in stock ✅',
       '• Substitutions: Baby spinach → regular spinach (if needed)',
       '• Delivery: Tomorrow 9–10 AM',
-      '• Estimated total: ₹2,320'
+      '• Estimated total: ₹2,320',
     ],
   },
   {
@@ -47,7 +49,7 @@ const STEPS: Step[] = [
       '• Apply coupon “FRESH100” (₹100 off)',
       '• Select slot: Tomorrow 9–10 AM',
       '• Pay with saved UPI',
-      '• Order placed successfully ✅'
+      '• Order placed successfully ✅',
     ],
   },
   {
@@ -60,12 +62,23 @@ const STEPS: Step[] = [
       '• Total: ₹2,220 (after coupon)',
       '• ETA: Tomorrow 9–10 AM',
       '• Tracking link: sent to your phone',
-      '• Tip: “Say ‘repeat next week’ to automate this.”'
+      '• Tip: “Say ‘repeat next week’ to automate this.”',
     ],
   },
 ];
 
 const EASE = [0.2, 0.8, 0.2, 1] as const;
+
+/** Centralized timing controls */
+const PHASE_DWELL_MS = 3200;
+const TRANS = {
+  chip: 0.5,
+  title: 0.8,
+  progress: 1.2,
+  card: 0.5,
+  panel: 0.6,
+  pulse: 2.4,
+};
 
 const StepChip = ({ label, active, idx }: { label: string; active: boolean; idx: number }) => (
   <motion.div
@@ -76,7 +89,7 @@ const StepChip = ({ label, active, idx }: { label: string; active: boolean; idx:
       scale: active ? 1.05 : 1,
       boxShadow: active ? '0 10px 20px rgba(255,46,99,0.25)' : '0 6px 14px rgba(0,0,0,0.08)',
     }}
-    transition={{ duration: 0.3, ease: EASE }}
+    transition={{ duration: TRANS.chip, ease: EASE }}
     style={{
       padding: '6px 12px',
       borderRadius: 999,
@@ -96,91 +109,96 @@ const StepChip = ({ label, active, idx }: { label: string; active: boolean; idx:
 const Slide23: React.FC = () => {
   const [activeIdx, setActiveIdx] = useState(0);
   const [isPaused, setPaused] = useState(false);
-  const [typedText, setTypedText] = useState<string>(''); // example panel typing
+  const [typedText, setTypedText] = useState<string>('');
   const [typingDone, setTypingDone] = useState(false);
 
-  // refs & layout measurement
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const robotRef = useRef<HTMLDivElement | null>(null);
   const inView = useInView(containerRef, { amount: 0.5 });
 
-  // robot animation controller
-  const robotControls = useAnimation();
+  /** ===== Pause/Resume-able phase timer ===== */
+  const timerRef = useRef<number | null>(null);
+  const phaseStartRef = useRef<number>(0);
+  const remainingRef = useRef<number>(PHASE_DWELL_MS);
+  const runningRef = useRef<boolean>(false);
+  const pausedRef = useRef<boolean>(isPaused);
+  const inViewRef = useRef<boolean>(inView);
 
-  // measure card centers for robot travel
-  const positions = useMemo(() => ({ centers: [] as number[] }), []);
-  const measure = React.useCallback(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const cRect = container.getBoundingClientRect();
-    positions.centers = [];
-    cardsRef.current.forEach((el) => {
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      positions.centers.push(r.left - cRect.left + r.width / 2);
-    });
-  }, [positions]);
+  useEffect(() => { pausedRef.current = isPaused; }, [isPaused]);
+  useEffect(() => { inViewRef.current = inView; }, [inView]);
 
+  const clearTimer = () => {
+    if (timerRef.current !== null) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  // The recurring "tick" that advances phases.
+  const tickRef = useRef<(() => void) | null>(null);  // ✅ recommended
+
+  tickRef.current = () => {
+    // Advance to next step
+    setActiveIdx((prev) => (prev + 1) % STEPS.length);
+    // Reset timing for the new phase
+    phaseStartRef.current = Date.now();
+    remainingRef.current = PHASE_DWELL_MS;
+
+    // Chain the next tick only if still playing & in view
+    if (inViewRef.current && !pausedRef.current) {
+      clearTimer();
+      timerRef.current = window.setTimeout(() => tickRef.current && tickRef.current(), PHASE_DWELL_MS);
+      runningRef.current = true;
+    } else {
+      runningRef.current = false;
+      clearTimer();
+    }
+  };
+
+  // Manage starting, pausing, resuming without resetting to first phase
   useEffect(() => {
-    measure();
-    const ro = new ResizeObserver(() => measure());
-    if (containerRef.current) ro.observe(containerRef.current);
-    cardsRef.current.forEach((el) => el && ro.observe(el));
-    window.addEventListener('resize', measure);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener('resize', measure);
-    };
-  }, [measure]);
+    // If not visible or paused: pause (capture remaining time)
+    if (!inView || isPaused) {
+      if (runningRef.current) {
+        const elapsed = Date.now() - phaseStartRef.current;
+        remainingRef.current = Math.max(0, remainingRef.current - elapsed);
+      }
+      clearTimer();
+      runningRef.current = false;
+      return;
+    }
 
-  // Typewriter for example panel (hardcoded content)
+    // Visible & playing: resume from remaining time
+    if (!runningRef.current) {
+      const delay = Math.max(0, remainingRef.current);
+      phaseStartRef.current = Date.now();
+      clearTimer();
+      timerRef.current = window.setTimeout(() => tickRef.current && tickRef.current(), delay);
+      runningRef.current = true;
+    }
+
+    return () => { /* nothing here; cleanup handled on deps change/unmount */ };
+  }, [inView, isPaused]);
+
+  // Cleanup on unmount
+  useEffect(() => () => clearTimer(), []);
+
+  /** ===== Typewriter for the example panel ===== */
   useEffect(() => {
     const lines = STEPS[activeIdx].exampleLines;
     const full = lines.join('\n');
     let i = 0;
     setTypedText('');
     setTypingDone(false);
-
-    const id = setInterval(() => {
+    const id = window.setInterval(() => {
       i++;
       setTypedText(full.slice(0, i));
       if (i >= full.length) {
-        clearInterval(id);
+        window.clearInterval(id);
         setTypingDone(true);
       }
-    }, 16); // speed
-    return () => clearInterval(id);
+    }, 16);
+    return () => window.clearInterval(id);
   }, [activeIdx]);
-
-  // autoplay loop when in view
-  useEffect(() => {
-    let cancel = false;
-
-    const run = async () => {
-      while (!cancel) {
-        if (!inView || isPaused) {
-          await new Promise((r) => setTimeout(r, 200));
-          continue;
-        }
-        for (let i = 0; i < STEPS.length; i++) {
-          setActiveIdx(i);
-          // move robot to card center (shift ~20px to roughly center the emoji width)
-          const x = (positions.centers[i] ?? 0) - 20;
-          await robotControls.start({ x, transition: { duration: 0.8, ease: EASE } });
-          // linger a bit longer on steps where typing happens
-          await new Promise((r) => setTimeout(r, 1300));
-          if (cancel) return;
-          if (!inView || isPaused) break;
-        }
-      }
-    };
-    run();
-    return () => {
-      cancel = true;
-      robotControls.stop();
-    };
-  }, [inView, isPaused, positions, robotControls]);
 
   const activeStep = STEPS[activeIdx];
 
@@ -206,7 +224,7 @@ const Slide23: React.FC = () => {
         style={{ fontSize: '2.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}
         initial={{ opacity: 0, y: -18 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        transition={{ duration: TRANS.title, ease: 'easeOut' }}
       >
         Single Agent Workflow — Grocery Order Story
       </motion.h2>
@@ -214,10 +232,10 @@ const Slide23: React.FC = () => {
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
+        transition={{ delay: 0.2, duration: TRANS.title }}
         style={{ color: '#475569', marginTop: 4, fontSize: 16, maxWidth: 840 }}
       >
-        Follow the assistant 🤖 as it goes from your <b>request</b>, to <b>planning</b>, to <b>doing</b>, and finally <b>reporting back</b>.
+        Follow the assistant as it goes from your <b>request</b>, to <b>planning</b>, to <b>doing</b>, and finally <b>reporting back</b>.
       </motion.p>
 
       {/* Step chips */}
@@ -246,7 +264,7 @@ const Slide23: React.FC = () => {
           key={activeIdx}
           initial={{ width: '0%' }}
           animate={{ width: `${((activeIdx + 1) / STEPS.length) * 100}%` }}
-          transition={{ duration: 0.6, ease: EASE }}
+          transition={{ duration: TRANS.progress, ease: EASE }}
           style={{ height: '100%', background: 'linear-gradient(90deg,#ff2e63,#ff9f43)' }}
         />
       </div>
@@ -266,7 +284,7 @@ const Slide23: React.FC = () => {
           overflow: 'hidden',
         }}
       >
-        {/* Cards row (wrap on small screens) */}
+        {/* Cards row */}
         <div
           style={{
             display: 'flex',
@@ -281,16 +299,16 @@ const Slide23: React.FC = () => {
             return (
               <motion.div
                 key={step.id}
-                ref={(el) => (cardsRef.current[i] = el)}
                 initial={false}
                 animate={{
-                  y: active ? -4 : 0,
+                  y: active ? -6 : 0,
+                  scale: active ? 1.03 : 1,
                   boxShadow: active
-                    ? '0 16px 36px rgba(255,46,99,0.18)'
-                    : '0 10px 24px rgba(0,0,0,0.08)',
-                  borderColor: active ? 'rgba(255,46,99,0.35)' : 'rgba(0,0,0,0.06)',
+                    ? '0 32px 80px rgba(255,46,99,0.35), 0 10px 24px rgba(0,0,0,0.12)'
+                    : '0 8px 18px rgba(0,0,0,0.08)',
+                  borderColor: active ? 'rgba(255,46,99,0.5)' : 'rgba(0,0,0,0.06)',
                 }}
-                transition={{ duration: 0.3, ease: EASE }}
+                transition={{ duration: TRANS.card, ease: EASE }}
                 style={{
                   flex: '1 1 200px',
                   minWidth: 200,
@@ -303,15 +321,19 @@ const Slide23: React.FC = () => {
                   position: 'relative',
                 }}
               >
-                {/* subtle active glow ring */}
+                {/* Active glow pulse */}
                 <motion.div
-                  animate={active ? { opacity: [0.3, 0.12, 0.3], scale: [1, 1.04, 1] } : { opacity: 0 }}
-                  transition={{ duration: 1.6, repeat: active ? Infinity : 0, ease: 'easeInOut' }}
+                  animate={
+                    active
+                      ? { opacity: [0.4, 0.18, 0.4], scale: [1, 1.05, 1] }
+                      : { opacity: 0 }
+                  }
+                  transition={{ duration: TRANS.pulse, repeat: active ? Infinity : 0, ease: 'easeInOut' }}
                   style={{
                     position: 'absolute',
-                    inset: -6,
+                    inset: -8,
                     borderRadius: 16,
-                    background: 'radial-gradient(circle, rgba(255,46,99,0.18), transparent 70%)',
+                    background: 'radial-gradient(circle, rgba(255,46,99,0.22), transparent 70%)',
                     pointerEvents: 'none',
                   }}
                 />
@@ -322,52 +344,6 @@ const Slide23: React.FC = () => {
             );
           })}
         </div>
-
-        {/* Flow arrows (SVG overlay) */}
-        <svg
-          viewBox="0 0 1000 120"
-          preserveAspectRatio="none"
-          style={{
-            position: 'absolute',
-            left: 12,
-            right: 12,
-            top: 24,
-            height: 80,
-            pointerEvents: 'none',
-            opacity: 0.95,
-          }}
-        >
-          {[0, 1, 2].map((i) => (
-            <motion.path
-              key={i}
-              d={`M ${100 + i * 280} 60 C ${170 + i * 280} 20, ${230 + i * 280} 100, ${300 + i * 280} 60`}
-              fill="none"
-              stroke={i < activeIdx ? '#ff9f43' : '#cbd5e1'}
-              strokeWidth={3}
-              strokeDasharray="6 6"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.9, ease: 'easeInOut' }}
-            />
-          ))}
-        </svg>
-
-        {/* Robot */}
-        <motion.div
-          ref={robotRef}
-          animate={robotControls}
-          style={{
-            position: 'absolute',
-            top: 8,
-            left: 0,
-            fontSize: 32,
-            textShadow: '0 4px 8px rgba(0,0,0,0.15)',
-            zIndex: 3,
-          }}
-          aria-label={`Robot at step: ${activeStep.label}`}
-        >
-          🤖
-        </motion.div>
 
         {/* Example Panel (typed) */}
         <div
@@ -386,7 +362,7 @@ const Slide23: React.FC = () => {
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -6, opacity: 0 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
+              transition={{ duration: TRANS.panel, ease: 'easeOut' }}
               style={{
                 background: 'rgba(17,24,39,0.9)',
                 color: '#e5e7eb',

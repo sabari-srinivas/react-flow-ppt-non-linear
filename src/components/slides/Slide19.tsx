@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { motion } from 'framer-motion';
+import { motion, cubicBezier, type Variants } from 'framer-motion';
 import { slideContainer, titleStyle } from '../../styles/slideStyles';
 
 type UseCase = {
@@ -60,21 +60,23 @@ const cases: UseCase[] = [
   },
 ];
 
-const containerVariants = {
+const EASE = cubicBezier(0.2, 0.65, 0.3, 0.9);
+
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, when: 'beforeChildren' as const },
+    transition: { staggerChildren: 0.08, when: 'beforeChildren' },
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 18, scale: 0.98 },
   show: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.45, ease: [0.2, 0.65, 0.3, 0.9] },
+    transition: { duration: 0.45, ease: EASE },
   },
 };
 
@@ -147,7 +149,7 @@ const Slide19: React.FC = () => {
         initial={{ y: -16, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true, amount: 0.7 }}
-        transition={{ duration: 0.6, ease: [0.2, 0.65, 0.3, 0.9] }}
+        transition={{ duration: 0.6, ease: EASE }}
         style={{
           ...titleStyle,
           textAlign: 'center',
@@ -209,7 +211,7 @@ const Slide19: React.FC = () => {
             <motion.div
               aria-hidden
               animate={{ y: [0, -3, 0] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: [0.2, 0.65, 0.3, 0.9] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: EASE }}
               style={{
                 fontSize: 'clamp(1.6rem, 3.5vw, 2rem)',
                 width: 48,

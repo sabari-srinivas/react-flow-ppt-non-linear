@@ -1,8 +1,9 @@
-import { motion, useAnimation, AnimatePresence, useInView } from 'framer-motion';
+import { motion, useAnimation, AnimatePresence, useInView, cubicBezier } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { slideContainer } from '../../styles/slideStyles';
 
-const EASE: number[] = [0.2, 0.8, 0.2, 1];
+// Use a typed easing function instead of number[]
+const EASE = cubicBezier(0.2, 0.8, 0.2, 1);
 
 const StepChip = ({ label, active }: { label: string; active: boolean }) => (
   <motion.div
@@ -40,7 +41,7 @@ const StepCard = ({ title, line }: { title: string; line: string }) => (
       borderRadius: 12,
       padding: '10px 14px',
       minWidth: 240,
-      maxWidth: 520,     // keep it from stretching too wide
+      maxWidth: 520,
     }}
   >
     <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>{title}</div>
@@ -112,11 +113,11 @@ const Slide22 = () => {
         });
         potControls.start({
           scale: [1, 1.03, 1],
-          transition: { duration: 0.6, repeat: 3, repeatType: 'mirror' },
+          transition: { duration: 0.6, repeat: 3, repeatType: 'mirror', ease: EASE },
         });
         steamControls.start({
           opacity: [0, 0.9, 0.6, 0.9],
-          transition: { duration: 1.4, repeat: 2, repeatType: 'mirror' },
+          transition: { duration: 1.4, repeat: 2, repeatType: 'mirror', ease: 'easeInOut' },
         });
         await dishControls.start({
           opacity: 1,
@@ -249,7 +250,7 @@ const Slide22 = () => {
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 5,
-            pointerEvents: 'none', // purely informational
+            pointerEvents: 'none',
           }}
         >
           <AnimatePresence mode="wait">

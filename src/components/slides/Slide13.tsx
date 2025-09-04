@@ -1,405 +1,426 @@
-import * as React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { slideContainer } from '../../styles/slideStyles';
+import * as React from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import { slideContainer, titleStyle } from "../../styles/slideStyles";
+// ✅ 1) Add this import
+import { cubicBezier } from "framer-motion";
 
-// Easing (TS-safe cubic beziers)
-const EASE_OUT: number[] = [0.16, 1, 0.3, 1];
-const EASE_SOFT: number[] = [0.2, 0.65, 0.3, 0.9];
+// Easing
+const EASE_SOFT = cubicBezier(0.2, 0.65, 0.3, 0.9);
+const EASE_OUT  = cubicBezier(0.16, 1, 0.3, 1);
 
-type Anchor = 'left' | 'right' | 'top' | 'bottom';
 
-type NodeGeo = {
-  city: string;
-  country: string;
-  lat: number;   // -90..90
-  lon: number;   // -180..180
-  emoji: string;
-  title: string;
-  blurb: string;
-  anchor?: Anchor; // optional override
+// ---- Typewriter helpers ----
+const charVariants = {
+  hidden: { opacity: 0, y: 2 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.04, ease: EASE_SOFT } },
 };
-
-type NodePlaced = NodeGeo & {
-  leftPct: number;  // 0..100
-  topPct: number;   // 0..100
-};
-
-// -------- Real cities & actions --------
-const GEO_NODES: NodeGeo[] = [
-  { city: 'Los Angeles', country: 'USA', lat: 34.0522, lon: -118.2437, emoji: '📝', title: 'Content Creation', blurb: 'From briefs to finished drafts—models transform sparse prompts into on-brand, multi-format content in minutes.' },
-  { city: 'Boston', country: 'USA', lat: 42.3601, lon: -71.0589, emoji: '💊', title: 'Drug Discovery', blurb: 'Generative chemistry proposes novel candidates; lab results feed back to guide the next round—faster, smarter pipelines.' },
-  { city: 'Bengaluru', country: 'India', lat: 12.9716, lon: 77.5946, emoji: '💻', title: 'Software Development', blurb: 'Natural language to code, code to tests, tests to fixes—developers steer, AI accelerates across the stack.' },
-  { city: 'Helsinki', country: 'Finland', lat: 60.1699, lon: 24.9384, emoji: '🎓', title: 'Personalized Education', blurb: 'Adaptive tutors tailor practice in real time, explaining concepts in each learner’s language and pace.' },
-  { city: 'Manila', country: 'Philippines', lat: 14.5995, lon: 120.9842, emoji: '🛟', title: 'Customer Support', blurb: '24/7 assistants triage, resolve, and summarize cases; agents get suggested replies and next steps.' },
-  { city: 'Shenzhen', country: 'China', lat: 22.5431, lon: 114.0579, emoji: '🚚', title: 'Supply Chain', blurb: 'Generative scenario planning anticipates demand shifts and suggests resilient fulfillment strategies.' },
-  { city: 'London', country: 'UK', lat: 51.5074, lon: -0.1278, emoji: '🛡️', title: 'Fraud Detection', blurb: 'Generative profiles model normal vs. abnormal behavior; anomalies trigger explainable alerts.' },
-  { city: 'San Francisco', country: 'USA', lat: 37.7749, lon: -122.4194, emoji: '🎨', title: 'Design & Prototyping', blurb: 'From sketches to renderings—AI proposes variants, styles, and quick iterations grounded in constraints.' },
-  { city: 'New York', country: 'USA', lat: 40.7128, lon: -74.0060, emoji: '📣', title: 'Marketing Optimization', blurb: 'Campaign copy, imagery, and audiences co-optimized; lift simulated before spend.' },
-  { city: 'Zurich', country: 'Switzerland', lat: 47.3769, lon: 8.5417, emoji: '📊', title: 'Financial Analysis', blurb: 'Narratives from numbers—models explain variance, surface risks, and draft board-ready insights.' },
-  { city: 'Berlin', country: 'Germany', lat: 52.5200, lon: 13.4050, emoji: '🔎', title: 'Knowledge Mining', blurb: 'Search → answers; docs → insights. Retrieval + synthesis turns silos into a living knowledge graph.' },
-  { city: 'Tokyo', country: 'Japan', lat: 35.6762, lon: 139.6503, emoji: '🤖', title: 'Robotics & Automation', blurb: 'Language-to-action plans let robots adapt on the fly; perception + policy improve with feedback.' },
-];
-
-// ---- Map helpers (equirectangular projection) ----
-// x% = (lon+180)/360 * 100; y% = (90-lat)/180 * 100  (works with the Wikimedia map)
-function lonLatToPercents(lon: number, lat: number) {
-  const leftPct = ((lon + 180) / 360) * 100;
-  const topPct = ((90 - lat) / 180) * 100;
-  return { leftPct, topPct };
-}
-
-function pctClamp(n: number) {
-  return Math.max(0, Math.min(100, n));
-}
-
-type AnchorPick = Anchor;
-function pickAnchor(leftPct: number, topPct: number): AnchorPick {
-  if (topPct < 22) return 'bottom';
-  if (topPct > 78) return 'top';
-  if (leftPct < 28) return 'right';
-  if (leftPct > 72) return 'left';
-  return 'bottom';
-}
-
-// For overlay SVG (viewBox 0..100 x 0..50), convert top% to half-scale
-function toSvgCoords(leftPct: number, topPct: number) {
-  return { x: leftPct, y: (topPct / 100) * 50 };
-}
-
-function connectorPath(x: number, y: number, anchor: Anchor) {
-  const len = 10; // % length in SVG space
-  switch (anchor) {
-    case 'left':   return `M ${x} ${y} C ${x - len * 0.4} ${y}, ${x - len * 0.8} ${y}, ${x - len} ${y}`;
-    case 'right':  return `M ${x} ${y} C ${x + len * 0.4} ${y}, ${x + len * 0.8} ${y}, ${x + len} ${y}`;
-    case 'top':    return `M ${x} ${y} C ${x} ${y - len * 0.4}, ${x} ${y - len * 0.8}, ${x} ${y - len}`;
-    case 'bottom':
-    default:       return `M ${x} ${y} C ${x} ${y + len * 0.4}, ${x} ${y + len * 0.8}, ${x} ${y + len}`;
-  }
-}
-
-const Badge: React.FC<{ title: string; anchor: Anchor }> = ({ title, anchor }) => {
-  const pos: React.CSSProperties =
-    anchor === 'left'
-      ? { right: '115%', top: '50%', transform: 'translateY(-50%)' }
-      : anchor === 'right'
-      ? { left: '115%', top: '50%', transform: 'translateY(-50%)' }
-      : anchor === 'bottom'
-      ? { top: '120%', left: '50%', transform: 'translateX(-50%)' }
-      : { bottom: '120%', left: '50%', transform: 'translateX(-50%)' };
-
+const lineVariants = (stagger = 0.035) => ({
+  hidden: {},
+  show: { transition: { staggerChildren: stagger, ease: EASE_SOFT } },
+});
+function TypeLine({ text, delay = 0 }: { text: string; delay?: number }) {
+  const chars = React.useMemo(() => Array.from(text), [text]);
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: EASE_SOFT }}
+    <motion.span
+      initial="hidden"
+      animate="show"
+      variants={lineVariants()}
+      transition={{ delay }}
+      style={{ whiteSpace: "pre-wrap", display: "inline-block" }}
+      aria-label={text}
+    >
+      {chars.map((c, i) => (
+        <motion.span key={i} variants={charVariants} style={{ display: "inline-block" }}>
+          {c === " " ? "\u00A0" : c}
+        </motion.span>
+      ))}
+    </motion.span>
+  );
+}
+function BlinkingCaret({ color = "#0b5" }: { color?: string }) {
+  return (
+    <motion.span
+      aria-hidden
+      style={{ display: "inline-block", width: 10, marginLeft: 4, borderRadius: 1, height: "1.1em", verticalAlign: "text-bottom", background: color, opacity: 0.85 }}
+      animate={{ opacity: [0, 1, 0] }}
+      transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
+    />
+  );
+}
+
+// ---- Autoplay gated by visibility ----
+function useAutoplay(steps: number, delayMs = 2200) {
+  const [step, setStep] = React.useState(0);
+  const [playing, setPlaying] = React.useState(false); // gated by inView
+  React.useEffect(() => {
+    if (!playing) return;
+    const id = window.setInterval(() => setStep((s) => (s + 1) % steps), delayMs);
+    return () => window.clearInterval(id);
+  }, [playing, steps, delayMs]);
+  const restart = React.useCallback(() => {
+    setStep(0);
+    setPlaying(true);
+  }, []);
+  const pause = React.useCallback(() => setPlaying(false), []);
+  const play = React.useCallback(() => setPlaying(true), []);
+  return { step, setStep, playing, setPlaying, restart, pause, play };
+}
+
+// ---- Small UI helpers ----
+const Card: React.FC<{
+  title: string;
+  badge: string;
+  bg: string;
+  border: string;
+  children: React.ReactNode;
+  delay?: number;
+}> = ({ title, badge, bg, border, children, delay = 0 }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 14, scale: 0.98 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    exit={{ opacity: 0, y: -10, scale: 0.98 }}
+    transition={{ duration: 0.5, ease: EASE_SOFT, delay }}
+    style={{
+      background: bg,
+      border: `1px solid ${border}`,
+      borderRadius: 16,
+      padding: 16,
+      boxShadow: "0 14px 32px rgba(0,0,0,0.10)",
+      position: "relative",
+      minHeight: 160,
+    }}
+  >
+    <div
       style={{
-        position: 'absolute',
-        padding: '6px 10px',
-        borderRadius: 999,
+        position: "absolute",
+        top: -10,
+        left: -10,
+        background: "#0ea5e9",
+        color: "white",
+        fontWeight: 800,
         fontSize: 12,
-        background: 'rgba(255,255,255,0.92)',
-        color: '#334155',
-        boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
-        border: '1px solid rgba(0,0,0,0.06)',
-        whiteSpace: 'nowrap',
-        pointerEvents: 'none',
-        ...pos,
+        padding: "6px 10px",
+        borderRadius: 999,
+        boxShadow: "0 8px 18px rgba(14,165,233,0.35)",
       }}
     >
-      {title}
+      {badge}
+    </div>
+    <div style={{ fontWeight: 900, color: "#0f172a", marginBottom: 8 }}>{title}</div>
+    <div style={{ color: "#334155", lineHeight: 1.55 }}>{children}</div>
+  </motion.div>
+);
+
+// ---- Prompt bubble (ALWAYS VISIBLE) ----
+const PromptBubble: React.FC<{ prompt: string; isTyping: boolean }> = ({ prompt, isTyping }) => {
+  return (
+    <motion.div
+      key="prompt-bubble"
+      initial={{ y: -8, opacity: 0, scale: 0.98 }}
+      animate={{ y: 0, opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: EASE_SOFT }}
+      style={{
+        background: "#e0f2fe",
+        color: "#075985",
+        padding: "14px 18px",
+        borderRadius: 14,
+        fontSize: "1.1rem",
+        marginBottom: 18,
+        boxShadow: "0 12px 24px rgba(0,0,0,0.08)",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        maxWidth: 920,
+        width: "fit-content",
+      }}
+      aria-live="polite"
+    >
+      {isTyping ? (
+        <>
+          <TypeLine text={prompt} delay={0.15} />
+          <BlinkingCaret />
+        </>
+      ) : (
+        <span>{prompt}</span>
+      )}
     </motion.div>
   );
 };
 
-export default function Slide13() {
-  // Place nodes using lon/lat → %
-  const nodes: NodePlaced[] = React.useMemo(() => {
-    return GEO_NODES.map(n => {
-      const { leftPct, topPct } = lonLatToPercents(n.lon, n.lat);
-      return {
-        ...n,
-        leftPct: pctClamp(leftPct),
-        topPct: pctClamp(topPct),
-      };
-    });
-  }, []);
+// ---- Slide 13: One Prompt → Three Outputs ----
+const Slide13: React.FC = () => {
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
+  const inView = useInView(rootRef, { amount: 0.6, margin: "0px 0px -10% 0px" });
 
-  const [active, setActive] = React.useState(0);
-  const [paused, setPaused] = React.useState(false);
+  // Phases: 0 Prompt typing → 1 “Thinking” shimmer → 2 Split into 3 outputs → 3 CTA
+  const { step, setStep, playing, setPlaying, restart, pause, play } = useAutoplay(4, 2200);
 
-  // Auto-advance every ~4s; pause on hover
+  // Start ONLY when visible; reset/pause when not
   React.useEffect(() => {
-    if (paused) return;
-    const id = setInterval(() => setActive(i => (i + 1) % nodes.length), 4000);
-    return () => clearInterval(id);
-  }, [paused, nodes.length]);
+    if (inView) {
+      restart();
+    } else {
+      setStep(0);
+      pause();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inView]);
 
-  const activeNode = nodes[active];
-  const activeAnchor: Anchor = activeNode.anchor ?? pickAnchor(activeNode.leftPct, activeNode.topPct);
+  const prompt = "“Plan a team event for 60 people next Friday.”";
 
   return (
     <motion.div
+      ref={rootRef}
+      key="one-prompt-three-outputs"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.6, ease: EASE_OUT }}
       style={{
         ...slideContainer,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-        overflow: 'hidden',
-        padding: '40px 60px',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        background: "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)",
+        padding: "36px 56px",
+        overflow: "hidden",
+        position: "relative",
       }}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onMouseEnter={() => setPlaying(false)}
+      onMouseLeave={() => inView && setPlaying(true)}
     >
       {/* Title */}
       <motion.h2
-        initial={{ y: -12, opacity: 0 }}
+        initial={{ y: -16, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: EASE_SOFT }}
-        style={{ fontSize: '3rem', color: '#1f2937', marginBottom: 10, textAlign: 'center' }}
+        transition={{ duration: 0.7, ease: EASE_SOFT }}
+        style={{
+          ...titleStyle,
+          fontSize: "3rem",
+          marginBottom: 10,
+          background: "linear-gradient(90deg, #2563eb, #10b981, #f59e0b)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          textAlign: "center",
+        }}
       >
-        Generative AI in Action
+        One Prompt → Three Outputs
       </motion.h2>
 
-      {/* Auto-advancing spotlight card (syncs with active node) */}
+      {/* Controls */}
+      <div
+        style={{
+          display: "flex",
+          gap: 10,
+          alignItems: "center",
+          marginBottom: 18,
+          background: "rgba(255,255,255,0.9)",
+          border: "1px solid rgba(0,0,0,0.06)",
+          borderRadius: 12,
+          padding: "8px 12px",
+          boxShadow: "0 10px 22px rgba(0,0,0,0.08)",
+        }}
+      >
+        <div style={{ fontWeight: 800, color: "#0f172a" }}>Prompt → Agenda • Poster • Email</div>
+        <div style={{ width: 6, height: 6, borderRadius: 999, background: playing ? "#10b981" : "#ef4444", marginLeft: 8 }} />
+        <button onClick={() => (playing ? pause() : play())} style={{ border: "none", background: "#f1f5f9", borderRadius: 8, padding: "6px 10px", cursor: "pointer" }}>
+          {playing ? "Pause" : "Play"}
+        </button>
+        <button onClick={() => restart()} style={{ border: "none", background: "#eef2ff", borderRadius: 8, padding: "6px 10px", cursor: "pointer" }}>
+          Restart
+        </button>
+      </div>
+
+      {/* PROMPT: Always visible. Type on step 0; static thereafter */}
+      <PromptBubble prompt={prompt} isTyping={step === 0} />
+
+      {/* Stage 1: “Thinking” shimmer */}
       <AnimatePresence mode="wait">
-        <motion.div
-          key={activeNode.title}
-          initial={{ y: -8, opacity: 0, scale: 0.98 }}
-          animate={{ y: 0, opacity: 1, scale: 1 }}
-          exit={{ y: -6, opacity: 0 }}
-          transition={{ duration: 0.45, ease: EASE_SOFT }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            padding: '8px 12px',
-            borderRadius: 12,
-            background: 'rgba(255,255,255,0.9)',
-            border: '1px solid rgba(0,0,0,0.06)',
-            boxShadow: '0 10px 24px rgba(0,0,0,0.10)',
-            marginBottom: 8,
-            maxWidth: 720,
-          }}
-        >
-          <div style={{ fontSize: 18 }}>{activeNode.emoji}</div>
-          <div style={{ fontWeight: 800, color: '#0f172a' }}>
-            {activeNode.title} — <span style={{ fontWeight: 600, color: '#334155' }}>{activeNode.city}, {activeNode.country}</span>
-          </div>
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Progress indicator */}
-      <div style={{ width: '60%', maxWidth: 520, height: 6, borderRadius: 4, background: '#e2e8f0', overflow: 'hidden', marginBottom: 12 }}>
-        <motion.div
-          key={active}
-          initial={{ width: '0%' }}
-          animate={{ width: '100%' }}
-          transition={{ duration: 3.6, ease: EASE_SOFT }}
-          style={{ height: '100%', background: 'linear-gradient(90deg, #3b82f6, #22c55e)' }}
-        />
-      </div>
-      <div style={{ fontSize: 12, color: '#64748b', marginBottom: 8 }}>
-        Chapter {active + 1}/{nodes.length}
-      </div>
-
-      {/* Map stage (2:1 aspect ratio) */}
-      <div style={{ position: 'relative', width: '100%', maxWidth: 1200, margin: '14px 0 26px' }}>
-        <div style={{ width: '100%', paddingTop: '50%', position: 'relative' }}>
-          {/* Map image */}
-          <motion.img
-            src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg"
-            alt="World Map"
-            initial={{ opacity: 0, scale: 1.02 }}
-            animate={{ opacity: 0.35, scale: 1 }}
-            transition={{ duration: 0.9, ease: EASE_OUT }}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              filter: 'grayscale(10%)',
-              pointerEvents: 'none',
-            }}
-          />
-
-          {/* Overlay SVG for glow + connectors (percentage coordinate space) */}
-          <svg viewBox="0 0 100 50" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-            <defs>
-              <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="rgba(59,130,246,0.35)" />
-                <stop offset="60%" stopColor="rgba(34,197,94,0.25)" />
-                <stop offset="100%" stopColor="rgba(34,197,94,0)" />
-              </radialGradient>
-            </defs>
-
-            {/* ambient glow tracking active node */}
-            <AnimatePresence>
-              <motion.circle
-                key={`glow-${active}`}
-                cx={toSvgCoords(activeNode.leftPct, activeNode.topPct).x}
-                cy={toSvgCoords(activeNode.leftPct, activeNode.topPct).y}
-                r={10}
-                fill="url(#glowGrad)"
-                initial={{ opacity: 0, r: 7 }}
-                animate={{ opacity: 0.5, r: 11 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.6, ease: EASE_SOFT }}
-              />
-            </AnimatePresence>
-
-            {/* Active dashed connector */}
-            <motion.path
-              key={`conn-${active}`}
-              d={connectorPath(
-                toSvgCoords(activeNode.leftPct, activeNode.topPct).x,
-                toSvgCoords(activeNode.leftPct, activeNode.topPct).y,
-                activeAnchor
-              )}
-              fill="none"
-              stroke="#64748b"
-              strokeWidth={0.6}
-              strokeDasharray="2 2"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.9 }}
-              transition={{ duration: 0.8, ease: EASE_OUT }}
-            />
-          </svg>
-
-          {/* HTML nodes (badges & emoji) */}
-          {nodes.map((n, i) => {
-            const isActive = i === active;
-            const anchor = n.anchor ?? pickAnchor(n.leftPct, n.topPct);
-            return (
-              <div
-                key={`${n.city}-${n.title}`}
-                onClick={() => setActive(i)}
-                style={{
-                  position: 'absolute',
-                  left: `${n.leftPct}%`,
-                  top: `${n.topPct}%`,
-                  transform: 'translate(-50%, -50%)',
-                  cursor: 'pointer',
-                }}
-                title={`${n.title} — ${n.city}, ${n.country}`}
-              >
-                {/* ripples */}
-                <motion.span
-                  style={{
-                    position: 'absolute',
-                    width: 54,
-                    height: 54,
-                    borderRadius: '50%',
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    border: '2px solid rgba(59,130,246,0.35)',
-                  }}
-                  animate={isActive ? { scale: [0.9, 1.2, 1.35], opacity: [0.6, 0.35, 0] } : { opacity: 0 }}
-                  transition={{ duration: 1.6, repeat: isActive ? Infinity : 0, ease: EASE_SOFT }}
-                />
-                <motion.span
-                  style={{
-                    position: 'absolute',
-                    width: 78,
-                    height: 78,
-                    borderRadius: '50%',
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    border: '2px solid rgba(34,197,94,0.28)',
-                  }}
-                  animate={isActive ? { scale: [0.9, 1.35, 1.6], opacity: [0.5, 0.25, 0] } : { opacity: 0 }}
-                  transition={{ duration: 2.2, repeat: isActive ? Infinity : 0, ease: EASE_SOFT }}
-                />
-
-                {/* icon */}
-                <motion.div
-                  initial={false}
-                  animate={{
-                    scale: isActive ? 1.08 : 1,
-                    boxShadow: isActive ? '0 14px 36px rgba(0,0,0,0.20)' : '0 10px 26px rgba(0,0,0,0.12)',
-                  }}
-                  transition={{ duration: 0.3, ease: EASE_OUT }}
-                  style={{
-                    width: 46,
-                    height: 46,
-                    borderRadius: '50%',
-                    display: 'grid',
-                    placeItems: 'center',
-                    fontSize: '1.5rem',
-                    background: 'white',
-                    border: '1px solid rgba(0,0,0,0.06)',
-                    position: 'relative',
-                    zIndex: 2,
-                  }}
-                >
-                  <motion.span animate={{ y: [0, -3, 0] }} transition={{ duration: 2.6, repeat: Infinity, ease: EASE_SOFT, delay: 0.2 }}>
-                    {n.emoji}
-                  </motion.span>
-                </motion.div>
-
-                {/* badge */}
-                <Badge title={n.title} anchor={anchor} />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Narrator panel (auto-advances) */}
-      <div style={{ position: 'absolute', bottom: 40, width: '90%', maxWidth: 1200, left: '50%', transform: 'translateX(-50%)' }}>
-        <AnimatePresence mode="wait">
+        {step === 1 && (
           <motion.div
-            key={activeNode.title}
-            initial={{ y: 16, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -8, opacity: 0 }}
-            transition={{ duration: 0.45, ease: EASE_SOFT }}
+            key="thinking"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.5, ease: EASE_SOFT }}
             style={{
-              background: 'rgba(255,255,255,0.95)',
-              border: '1px solid rgba(0,0,0,0.06)',
-              boxShadow: '0 12px 30px rgba(0,0,0,0.12)',
-              borderRadius: 14,
-              padding: '14px 16px',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: 10,
+              width: 920,
+              maxWidth: "92vw",
+              height: 140,
+              borderRadius: 16,
+              background:
+                "linear-gradient(90deg, rgba(226,232,240,0.6) 25%, rgba(203,213,225,0.8) 37%, rgba(226,232,240,0.6) 63%)",
+              backgroundSize: "400% 100%",
+              border: "1px solid rgba(0,0,0,0.06)",
+              position: "relative",
+              overflow: "hidden",
             }}
           >
-            <div style={{ fontSize: 20, lineHeight: '24px' }}>{activeNode.emoji}</div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>
-                {activeNode.title} — <span style={{ fontWeight: 600, color: '#334155' }}>{activeNode.city}, {activeNode.country}</span>
-              </div>
-              <div style={{ color: '#334155', fontSize: 14, lineHeight: 1.5 }}>{activeNode.blurb}</div>
-            </div>
-            <motion.button
-              onClick={() => setActive((i) => (i + 1) % nodes.length)}
-              whileTap={{ scale: 0.98 }}
+            <motion.div
+              animate={{ backgroundPositionX: ["0%", "100%"] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
+              style={{ position: "absolute", inset: 0, background: "inherit" }}
+            />
+            <div
               style={{
-                border: 'none',
-                background: 'linear-gradient(90deg, #3b82f6, #22c55e)',
-                color: '#fff',
-                padding: '8px 12px',
-                borderRadius: 999,
-                fontSize: 12,
-                cursor: 'pointer',
-                boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+                position: "absolute",
+                bottom: 12,
+                left: 12,
+                color: "#334155",
+                fontWeight: 600,
+                background: "rgba(255,255,255,0.75)",
+                padding: "6px 10px",
+                borderRadius: 8,
               }}
-              aria-label="Next chapter"
             >
-              Next →
-            </motion.button>
+              Thinking… organizing tasks…
+            </div>
           </motion.div>
-        </AnimatePresence>
+        )}
+      </AnimatePresence>
+
+      {/* Stage 2: Split into three outputs */}
+      <AnimatePresence mode="wait">
+        {step === 2 && (
+          <motion.div
+            key="outputs"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.55, ease: EASE_SOFT }}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, minmax(220px, 1fr))",
+              gap: 16,
+              width: 920,
+              maxWidth: "92vw",
+              alignItems: "stretch",
+            }}
+          >
+            {/* 📋 Agenda */}
+            <Card title="Agenda" badge="📋" bg="linear-gradient(180deg,#ffffff, #f8fafc)" border="rgba(0,0,0,0.06)" delay={0.02}>
+              <ul style={{ paddingLeft: 18, margin: 0 }}>
+                <li>3:00 PM — Welcome & icebreakers</li>
+                <li>3:30 PM — Team challenge</li>
+                <li>4:30 PM — Snacks & awards</li>
+                <li>5:00 PM — Wrap-up & photos</li>
+              </ul>
+            </Card>
+
+            {/* 🎨 Poster (color card) */}
+            <Card title="Poster" badge="🎨" bg="linear-gradient(180deg,#0ea5e9 0%, #06b6d4 60%, #fde68a 100%)" border="rgba(14,165,233,0.35)" delay={0.14}>
+              <div
+                style={{
+                  borderRadius: 12,
+                  height: 130,
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.2), rgba(0,0,0,0.12))",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                {/* Decorative sun + mountains (CSS art) */}
+                <motion.div
+                  initial={{ scale: 0.85, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, ease: EASE_SOFT, delay: 0.05 }}
+                  style={{
+                    position: "absolute",
+                    top: 10,
+                    left: 14,
+                    width: 50,
+                    height: 50,
+                    borderRadius: "50%",
+                    background: "radial-gradient(circle,#fde68a 0%, #f59e0b 70%, rgba(0,0,0,0) 71%)",
+                    filter: "blur(0.5px)",
+                  }}
+                />
+                {[0, 1].map((m) => (
+                  <motion.div
+                    key={m}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.45, ease: EASE_SOFT, delay: 0.1 + m * 0.05 }}
+                    style={{
+                      position: "absolute",
+                      bottom: -8 + m * 6,
+                      left: m * 16,
+                      right: 0,
+                      height: 80 + m * 18,
+                      background: `linear-gradient(180deg, rgba(2,6,23,${0.25 + m * 0.18}) 0%, rgba(2,6,23,${0.55 + m * 0.18}) 100%)`,
+                      clipPath: `polygon(0% 100%, ${16 + m * 6}% 60%, ${30 + m * 7}% 42%, ${44 + m * 8}% 70%, 100% 100%)`,
+                    }}
+                  />
+                ))}
+                {/* Sweep gloss */}
+                <motion.div
+                  initial={{ x: "-120%" }}
+                  animate={{ x: "120%" }}
+                  transition={{ duration: 1.6, ease: "linear", repeat: Infinity, delay: 0.2 }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    bottom: 0,
+                    width: "28%",
+                    background: "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0) 100%)",
+                    transform: "skewX(-10deg)",
+                  }}
+                />
+              </div>
+              <div style={{ marginTop: 8, fontWeight: 700, color: "#0f172a" }}>“Team Day • Friday 3–5 PM”</div>
+            </Card>
+
+            {/* 📧 Email invite */}
+            <Card title="Email Invite" badge="📧" bg="linear-gradient(180deg,#ffffff, #f8fafc)" border="rgba(0,0,0,0.06)" delay={0.26}>
+              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", background: "#f1f5f9", padding: 10, borderRadius: 10 }}>
+                <div style={{ opacity: 0.8 }}>Subject: You’re invited — Team Event (Fri)</div>
+                <div style={{ height: 8 }} />
+                <div>Hello team,</div>
+                <div>Join us this Friday 3–5 PM for games, snacks, and awards.</div>
+                <div>Venue: 5F Atrium. RSVP by Wednesday.</div>
+                <div style={{ height: 8 }} />
+                <div>— Org Committee</div>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Stage 3: CTA / Message */}
+      <AnimatePresence mode="wait">
+        {step === 3 && (
+          <motion.div
+            key="cta"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.45, ease: EASE_SOFT }}
+            style={{
+              marginTop: 10,
+              background: "rgba(255,255,255,0.95)",
+              border: "1px solid rgba(0,0,0,0.06)",
+              borderRadius: 14,
+              padding: "12px 16px",
+              boxShadow: "0 12px 28px rgba(0,0,0,0.12)",
+              maxWidth: 920,
+            }}
+          >
+            <div style={{ fontWeight: 800, color: "#0f172a", marginBottom: 4 }}>
+              One prompt, many outputs — that’s Generative AI’s superpower.
+            </div>
+            <div style={{ color: "#334155" }}>
+              Ask once. Get <strong>agenda</strong>, <strong>poster</strong>, and <strong>email</strong> ready to go — then refine with simple edits.
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Footer hint */}
+      <div style={{ marginTop: 12, fontSize: 12, color: "#94a3b8" }}>
+        Auto-plays when visible • Hover to pause
       </div>
     </motion.div>
   );
-}
+};
+
+export default Slide13;

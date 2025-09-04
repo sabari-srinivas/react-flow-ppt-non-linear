@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion'
+import { motion, cubicBezier } from 'framer-motion'
 import { slideContainer } from '../../styles/slideStyles'
 
-// NOTE: Transition easings use cubic-bezier arrays to satisfy stricter TS types
-const EASE_OUT: number[] = [0.16, 1, 0.3, 1]
-const EASE_SOFT: number[] = [0.2, 0.65, 0.3, 0.9]
+// Use EasingFunction via cubicBezier to satisfy strict TS types
+const EASE_OUT = cubicBezier(0.16, 1, 0.3, 1)
+const EASE_SOFT = cubicBezier(0.2, 0.65, 0.3, 0.9)
 
 export default function Slide10() {
   const topCards = [
@@ -55,7 +55,7 @@ export default function Slide10() {
         What can AI do in an Enterprise?
       </motion.h2>
 
-      {/* Top Row - Cards (styled + animated, content unchanged) */}
+      {/* Top Row - Cards */}
       <div
         style={{
           display: 'grid',
@@ -107,7 +107,7 @@ export default function Slide10() {
         ))}
       </div>
 
-      {/* Middle Row - Stats (transitions only) */}
+      {/* Middle Row - Stats */}
       <div
         style={{
           display: 'grid',
@@ -132,7 +132,7 @@ export default function Slide10() {
         ))}
       </div>
 
-      {/* Bottom Strips (unchanged content) */}
+      {/* Bottom Strips */}
       {strips.map((b, i) => (
         <motion.div
           key={i}

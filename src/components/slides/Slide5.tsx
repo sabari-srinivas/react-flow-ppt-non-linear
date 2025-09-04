@@ -1,6 +1,7 @@
+
 import { motion } from 'framer-motion';
 
-// === Atomics ===
+// === Atomics (existing) ===
 const Neuron = ({ x, y, delay = 0 }: { x: number; y: number; delay?: number }) => (
   <motion.circle
     cx={x}
@@ -55,7 +56,6 @@ const DataDot = ({
   />
 );
 
-// reverse-moving dot to depict backprop gradients
 const BackpropDot = ({
   startX, startY, endX, endY, delay = 0,
 }: { startX: number; startY: number; endX: number; endY: number; delay?: number }) => (
@@ -68,7 +68,71 @@ const BackpropDot = ({
   />
 );
 
-// === Variants ===
+// === NEW: Activation heat pulse (stronger, synced) ===
+const HeatPulse = ({
+  x, y, base = '#60a5fa', highlight = '#1d4ed8', delay = 0,
+}: { x: number; y: number; base?: string; highlight?: string; delay?: number }) => (
+  <motion.circle
+    cx={x}
+    cy={y}
+    r={15}
+    style={{ mixBlendMode: 'multiply' }}
+    initial={{ filter: 'brightness(1)', opacity: 0.35 }}
+    animate={{ filter: ['brightness(1)', 'brightness(1.5)', 'brightness(1)'], opacity: [0.35, 0.9, 0.35], fill: [base, highlight, base] }}
+    transition={{ duration: 1.4, delay, repeat: Infinity, ease: 'easeInOut' }}
+  />
+);
+
+// === NEW: Backprop glow overlay along a connection ===
+const GlowConnection = ({
+  x1, y1, x2, y2, delay = 0,
+}: { x1: number; y1: number; x2: number; y2: number; delay?: number }) => (
+  <>
+    {/* faint red path underlay */}
+    <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#e74c3c22" strokeWidth={6} strokeLinecap="round" />
+    {/* animated red “wipe” */}
+    <motion.line
+      x1={x1}
+      y1={y1}
+      x2={x2}
+      y2={y2}
+      stroke="#e74c3c"
+      strokeWidth={4}
+      strokeLinecap="round"
+      strokeDasharray="1 240"
+      initial={{ strokeDashoffset: 240, opacity: 0 }}
+      animate={{ strokeDashoffset: [240, 0], opacity: [0, 1, 0] }}
+      transition={{ duration: 0.9, delay, repeat: Infinity, repeatDelay: 0.7, ease: 'easeInOut' }}
+    />
+  </>
+);
+
+// === NEW: Tiny loss curve preview (damped curve trending down) ===
+const LossMini = ({ x = 360, y = 320 }: { x?: number; y?: number }) => (
+  <g transform={`translate(${x},${y})`}>
+    <rect x={0} y={0} width={140} height={64} rx={8} ry={8} fill="#f8fafc" stroke="#e2e8f0" />
+    <text x={10} y={16} fontSize={10} fill="#64748b">Loss</text>
+    <motion.path
+      d="M10,48 C35,30 60,40 85,26 S130,18 130,14"
+      fill="none"
+      stroke="#ef4444"
+      strokeWidth={2}
+      initial={{ pathLength: 0, opacity: 0.9 }}
+      animate={{ pathLength: [0, 1], opacity: [0.9, 0.9] }}
+      transition={{ duration: 1.4, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
+    />
+    {/* Subtle trending “drop” */}
+    <motion.g
+      initial={{ opacity: 0.35, y: 0 }}
+      animate={{ opacity: [0.35, 0.6, 0.35], y: [0, -2, 0] }}
+      transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+    >
+      <circle cx={130} cy={14} r={3} fill="#ef4444" />
+    </motion.g>
+  </g>
+);
+
+// === Variants (existing) ===
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -161,7 +225,7 @@ const Slide5 = () => {
           minHeight: 0,
         }}
       >
-        {/* Left: Neural Networks (keep existing) */}
+        {/* LEFT (unchanged): explainer */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -229,7 +293,7 @@ const Slide5 = () => {
             </svg>
           </motion.div>
 
-          {/* Legend (new) */}
+          {/* Legend */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -253,7 +317,7 @@ const Slide5 = () => {
           </motion.div>
         </motion.div>
 
-        {/* Right: Diagram (kept, plus labels & extra anims) */}
+        {/* RIGHT: Diagram (enhanced) */}
         <div
           style={{
             background: 'white',
@@ -262,6 +326,7 @@ const Slide5 = () => {
             boxShadow: '0 6px 16px rgba(0,0,0,0.08)',
             overflow: 'hidden',
             minHeight: 0,
+            position: 'relative',
           }}
         >
           <svg width="100%" height="100%" viewBox="0 0 520 400" preserveAspectRatio="xMidYMid meet">
@@ -276,7 +341,7 @@ const Slide5 = () => {
               Output
             </motion.text>
 
-            {/* Labels above the arrow animations (NEW) */}
+            {/* Forward/back labels */}
             <motion.text x="140" y="70" fontSize="12" fill="#f39c12" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
               Forward pass: activations →
             </motion.text>
@@ -287,7 +352,7 @@ const Slide5 = () => {
               ← Backpropagating gradients
             </motion.text>
 
-            {/* Connections (existing) */}
+            {/* Connections (base) */}
             {inputLayer.map((inputNeuron, i) =>
               hiddenLayer1.map((hiddenNeuron, j) => (
                 <Connection
@@ -298,7 +363,7 @@ const Slide5 = () => {
                   y2={hiddenNeuron.y}
                   delay={0.45 + i * 0.05}
                 />
-              )),
+              ))
             )}
             {hiddenLayer1.map((hiddenNeuron, i) =>
               outputLayer.map((outputNeuron, j) => (
@@ -310,7 +375,33 @@ const Slide5 = () => {
                   y2={outputNeuron.y}
                   delay={0.9 + i * 0.05}
                 />
-              )),
+              ))
+            )}
+
+            {/* === NEW: Backprop glow overlays (timed after forward) === */}
+            {hiddenLayer1.map((hiddenNeuron, i) =>
+              inputLayer.map((inputNeuron, j) => (
+                <GlowConnection
+                  key={`glow-h-${i}-in-${j}`}
+                  x1={hiddenNeuron.x}
+                  y1={hiddenNeuron.y}
+                  x2={inputNeuron.x}
+                  y2={inputNeuron.y}
+                  delay={1.0 + i * 0.2 + j * 0.05}
+                />
+              ))
+            )}
+            {outputLayer.map((outputNeuron, i) =>
+              hiddenLayer1.map((hiddenNeuron, j) => (
+                <GlowConnection
+                  key={`glow-out-${i}-h-${j}`}
+                  x1={outputNeuron.x}
+                  y1={outputNeuron.y}
+                  x2={hiddenNeuron.x}
+                  y2={hiddenNeuron.y}
+                  delay={0.9 + i * 0.2 + j * 0.08}
+                />
+              ))
             )}
 
             {/* Forward activations (existing) */}
@@ -324,7 +415,7 @@ const Slide5 = () => {
                   endY={hiddenNeuron.y}
                   delay={0.4 + i * 0.15}
                 />
-              )),
+              ))
             )}
             {hiddenLayer1.map((hiddenNeuron, i) =>
               outputLayer.map((outputNeuron, j) => (
@@ -336,10 +427,10 @@ const Slide5 = () => {
                   endY={outputNeuron.y}
                   delay={0.8 + i * 0.15}
                 />
-              )),
+              ))
             )}
 
-            {/* Backprop gradients (NEW, reverse direction) */}
+            {/* Backprop dots (existing) */}
             {hiddenLayer1.map((hiddenNeuron, i) =>
               inputLayer.map((inputNeuron, j) => (
                 <BackpropDot
@@ -350,7 +441,7 @@ const Slide5 = () => {
                   endY={hiddenNeuron.y}
                   delay={1.0 + i * 0.1}
                 />
-              )),
+              ))
             )}
             {outputLayer.map((outputNeuron, i) =>
               hiddenLayer1.map((hiddenNeuron, j) => (
@@ -362,25 +453,28 @@ const Slide5 = () => {
                   endY={outputNeuron.y}
                   delay={1.2 + i * 0.1}
                 />
-              )),
+              ))
             )}
 
-            {/* Neurons (existing + new pulse rings) */}
+            {/* Neurons + NEW activation heat pulses */}
             {inputLayer.map((neuron, i) => (
               <g key={`input-${i}`}>
                 <Neuron {...neuron} delay={i * 0.1} />
+                <HeatPulse x={neuron.x} y={neuron.y} delay={0.2 + i * 0.6} />
                 <PulseRing x={neuron.x} y={neuron.y} color="#4a90e2" delay={0.2 + i * 0.6} />
               </g>
             ))}
             {hiddenLayer1.map((neuron, i) => (
               <g key={`hidden1-${i}`}>
                 <Neuron {...neuron} delay={0.5 + i * 0.1} />
+                <HeatPulse x={neuron.x} y={neuron.y} base="#93c5fd" highlight="#3b82f6" delay={0.6 + i * 0.75} />
                 <PulseRing x={neuron.x} y={neuron.y} color="#3b82f6" delay={0.6 + i * 0.75} />
               </g>
             ))}
             {outputLayer.map((neuron, i) => (
               <g key={`output-${i}`}>
                 <Neuron {...neuron} delay={1 + i * 0.1} />
+                <HeatPulse x={neuron.x} y={neuron.y} base="#86efac" highlight="#10b981" delay={1.0} />
                 <motion.circle
                   cx={neuron.x}
                   cy={neuron.y}
@@ -396,8 +490,8 @@ const Slide5 = () => {
             ))}
 
             <motion.text
-              x={30}
-              y={360}
+              x="30"
+              y="360"
               fontSize={11}
               fill="#7f8c8d"
               initial={{ opacity: 0 }}
@@ -406,6 +500,9 @@ const Slide5 = () => {
             >
               features → weighted sums → activation → logits
             </motion.text>
+
+            {/* === NEW: Mini loss preview inset === */}
+            <LossMini x={360} y={316} />
           </svg>
         </div>
       </div>

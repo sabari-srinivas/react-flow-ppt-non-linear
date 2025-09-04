@@ -28,7 +28,7 @@ const CARDS = [
     details: [
       'Trigger RPA/APIs to act on insights',
       'Drive robots, IoT and workflows with guardrails',
-      'Human-in-the-loop approvals for high‑risk actions',
+      'Human-in-the-loop approvals for high-risk actions',
     ],
   },
   {
@@ -53,7 +53,7 @@ const CARDS = [
     blurb: "Finding patterns that humans can't see",
     details: [
       'Automatic pattern mining over large datasets',
-      'Explainable KPIs with drill‑downs and what‑ifs',
+      'Explainable KPIs with drill-downs and what-ifs',
       'Forecasts with confidence and scenario tests',
     ],
   },
@@ -70,11 +70,6 @@ const cardVariants: Variants = {
     boxShadow: '0 14px 30px rgba(0,0,0,0.15)',
     transition: { duration: 0.25 },
   },
-}
-
-const haloVariants: Variants = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: { opacity: 1, scale: 1, transition: { duration: 0.6 } },
 }
 
 const modalVariants: Variants = {
@@ -143,17 +138,17 @@ export default function Slide9Interactive() {
           >
             {/* soft animated halo */}
             <motion.div
-              variants={haloVariants}
-              initial="initial"
-              animate="animate"
+              // ✅ Avoid duplicate 'animate' prop names:
+              // use direct initial/animate instead of variants + animate again
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: [0.65, 0.9, 0.65], scale: 1 }}
+              transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }}
               style={{
                 position: 'absolute',
                 inset: 0,
                 background: `radial-gradient(120px 60px at 50% 0%, ${c.accent}22, transparent 60%)`,
                 pointerEvents: 'none',
               }}
-              animate={{ opacity: [0.65, 0.9, 0.65] }}
-              transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }}
             />
 
             <div

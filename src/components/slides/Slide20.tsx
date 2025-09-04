@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // --- Style Definitions ---
 const styles: { [key: string]: React.CSSProperties } = {
@@ -245,7 +245,7 @@ function SummarizerCard() {
       <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
         <label style={{ ...styles.button, flexGrow: 1, backgroundColor: '#4B5563' }}>
           <IconUpload style={styles.smallIcon} />
-          {fileName || 'Upload Dummy PDF'}
+          {fileName || 'Upload PDF'}
           <input
             type="file"
             style={{ display: 'none' }}
@@ -623,6 +623,11 @@ function DataAnalysisCard() {
           <p style={styles.outputText}>{typedSummary}</p>
         </div>
       )}
+
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+      `}</style>
     </div>
   );
 }
