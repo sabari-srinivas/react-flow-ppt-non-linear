@@ -1,57 +1,47 @@
-import * as React from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
-import { slideContainer, titleStyle } from "../../styles/slideStyles";
-// ✅ 1) Add this import
-import { cubicBezier } from "framer-motion";
+import * as React from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import {
+  styles,
+  EASE_OUT,
+  EASE_SOFT,
+  charVariants,
+  lineVariants,
+  containerTransition,
+  titleTransition,
+  cardEnter,
+  thinkingEnter,
+  outputsEnter,
+  ctaEnter,
+} from '../../styles/slide13.bundle';
 
-// Easing
-const EASE_SOFT = cubicBezier(0.2, 0.65, 0.3, 0.9);
-const EASE_OUT  = cubicBezier(0.16, 1, 0.3, 1);
-
-
-// ---- Typewriter helpers ----
-const charVariants = {
-  hidden: { opacity: 0, y: 2 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.04, ease: EASE_SOFT } },
-};
-const lineVariants = (stagger = 0.035) => ({
-  hidden: {},
-  show: { transition: { staggerChildren: stagger, ease: EASE_SOFT } },
-});
+// --- Typewriter helpers (motion only; styles imported) ---
 function TypeLine({ text, delay = 0 }: { text: string; delay?: number }) {
   const chars = React.useMemo(() => Array.from(text), [text]);
   return (
-    <motion.span
-      initial="hidden"
-      animate="show"
-      variants={lineVariants()}
-      transition={{ delay }}
-      style={{ whiteSpace: "pre-wrap", display: "inline-block" }}
-      aria-label={text}
-    >
+    <motion.span initial="hidden" animate="show" variants={lineVariants()} transition={{ delay }} style={styles.typeSpan} aria-label={text}>
       {chars.map((c, i) => (
-        <motion.span key={i} variants={charVariants} style={{ display: "inline-block" }}>
-          {c === " " ? "\u00A0" : c}
+        <motion.span key={i} variants={charVariants} style={styles.typeChar}>
+          {c === ' ' ? '\u00A0' : c}
         </motion.span>
       ))}
     </motion.span>
   );
 }
-function BlinkingCaret({ color = "#0b5" }: { color?: string }) {
+function BlinkingCaret({ color = '#0b5' }: { color?: string }) {
   return (
     <motion.span
       aria-hidden
-      style={{ display: "inline-block", width: 10, marginLeft: 4, borderRadius: 1, height: "1.1em", verticalAlign: "text-bottom", background: color, opacity: 0.85 }}
+      style={{ ...styles.caret, background: color }}
       animate={{ opacity: [0, 1, 0] }}
-      transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
+      transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
     />
   );
 }
 
-// ---- Autoplay gated by visibility ----
+// --- Autoplay gated by visibility (logic unchanged) ---
 function useAutoplay(steps: number, delayMs = 2200) {
   const [step, setStep] = React.useState(0);
-  const [playing, setPlaying] = React.useState(false); // gated by inView
+  const [playing, setPlaying] = React.useState(false);
   React.useEffect(() => {
     if (!playing) return;
     const id = window.setInterval(() => setStep((s) => (s + 1) % steps), delayMs);
@@ -66,7 +56,7 @@ function useAutoplay(steps: number, delayMs = 2200) {
   return { step, setStep, playing, setPlaying, restart, pause, play };
 }
 
-// ---- Small UI helpers ----
+// --- Small UI helpers (styles pulled out) ---
 const Card: React.FC<{
   title: string;
   badge: string;
@@ -79,83 +69,43 @@ const Card: React.FC<{
     initial={{ opacity: 0, y: 14, scale: 0.98 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
     exit={{ opacity: 0, y: -10, scale: 0.98 }}
-    transition={{ duration: 0.5, ease: EASE_SOFT, delay }}
-    style={{
-      background: bg,
-      border: `1px solid ${border}`,
-      borderRadius: 16,
-      padding: 16,
-      boxShadow: "0 14px 32px rgba(0,0,0,0.10)",
-      position: "relative",
-      minHeight: 160,
-    }}
+    transition={{ ...cardEnter, delay }}
+    style={{ ...styles.card, background: bg, border: `1px solid ${border}` }}
   >
-    <div
-      style={{
-        position: "absolute",
-        top: -10,
-        left: -10,
-        background: "#0ea5e9",
-        color: "white",
-        fontWeight: 800,
-        fontSize: 12,
-        padding: "6px 10px",
-        borderRadius: 999,
-        boxShadow: "0 8px 18px rgba(14,165,233,0.35)",
-      }}
-    >
-      {badge}
-    </div>
-    <div style={{ fontWeight: 900, color: "#0f172a", marginBottom: 8 }}>{title}</div>
-    <div style={{ color: "#334155", lineHeight: 1.55 }}>{children}</div>
+    <div style={styles.cardBadge}>{badge}</div>
+    <div style={styles.cardTitle}>{title}</div>
+    <div style={styles.cardBody}>{children}</div>
   </motion.div>
 );
 
-// ---- Prompt bubble (ALWAYS VISIBLE) ----
-const PromptBubble: React.FC<{ prompt: string; isTyping: boolean }> = ({ prompt, isTyping }) => {
-  return (
-    <motion.div
-      key="prompt-bubble"
-      initial={{ y: -8, opacity: 0, scale: 0.98 }}
-      animate={{ y: 0, opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: EASE_SOFT }}
-      style={{
-        background: "#e0f2fe",
-        color: "#075985",
-        padding: "14px 18px",
-        borderRadius: 14,
-        fontSize: "1.1rem",
-        marginBottom: 18,
-        boxShadow: "0 12px 24px rgba(0,0,0,0.08)",
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 6,
-        maxWidth: 920,
-        width: "fit-content",
-      }}
-      aria-live="polite"
-    >
-      {isTyping ? (
-        <>
-          <TypeLine text={prompt} delay={0.15} />
-          <BlinkingCaret />
-        </>
-      ) : (
-        <span>{prompt}</span>
-      )}
-    </motion.div>
-  );
-};
+const PromptBubble: React.FC<{ prompt: string; isTyping: boolean }> = ({ prompt, isTyping }) => (
+  <motion.div
+    key="prompt-bubble"
+    initial={{ y: -8, opacity: 0, scale: 0.98 }}
+    animate={{ y: 0, opacity: 1, scale: 1 }}
+    transition={{ duration: 0.5, ease: EASE_SOFT }}
+    style={styles.promptBubble}
+    aria-live="polite"
+  >
+    {isTyping ? (
+      <>
+        <TypeLine text={prompt} delay={0.15} />
+        <BlinkingCaret />
+      </>
+    ) : (
+      <span>{prompt}</span>
+    )}
+  </motion.div>
+);
 
-// ---- Slide 13: One Prompt → Three Outputs ----
+// --- Slide 13 ---
 const Slide13: React.FC = () => {
   const rootRef = React.useRef<HTMLDivElement | null>(null);
-  const inView = useInView(rootRef, { amount: 0.6, margin: "0px 0px -10% 0px" });
+  const inView = useInView(rootRef, { amount: 0.6, margin: '0px 0px -10% 0px' });
 
-  // Phases: 0 Prompt typing → 1 “Thinking” shimmer → 2 Split into 3 outputs → 3 CTA
+  // Phases: 0 prompt → 1 thinking → 2 three outputs → 3 CTA
   const { step, setStep, playing, setPlaying, restart, pause, play } = useAutoplay(4, 2200);
 
-  // Start ONLY when visible; reset/pause when not
   React.useEffect(() => {
     if (inView) {
       restart();
@@ -166,7 +116,7 @@ const Slide13: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
-  const prompt = "“Plan a team event for 60 people next Friday.”";
+  const prompt = '“Plan a team event for 60 people next Friday.”';
 
   return (
     <motion.div
@@ -175,18 +125,8 @@ const Slide13: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.6, ease: EASE_OUT }}
-      style={{
-        ...slideContainer,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        background: "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)",
-        padding: "36px 56px",
-        overflow: "hidden",
-        position: "relative",
-      }}
+      transition={containerTransition}
+      style={styles.root}
       onMouseEnter={() => setPlaying(false)}
       onMouseLeave={() => inView && setPlaying(true)}
     >
@@ -194,48 +134,33 @@ const Slide13: React.FC = () => {
       <motion.h2
         initial={{ y: -16, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: EASE_SOFT }}
-        style={{
-          ...titleStyle,
-          fontSize: "3rem",
-          marginBottom: 10,
-          background: "linear-gradient(90deg, #2563eb, #10b981, #f59e0b)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          textAlign: "center",
-        }}
+        transition={titleTransition}
+        style={styles.title}
       >
         One Prompt → Three Outputs
       </motion.h2>
 
       {/* Controls */}
-      <div
-        style={{
-          display: "flex",
-          gap: 10,
-          alignItems: "center",
-          marginBottom: 18,
-          background: "rgba(255,255,255,0.9)",
-          border: "1px solid rgba(0,0,0,0.06)",
-          borderRadius: 12,
-          padding: "8px 12px",
-          boxShadow: "0 10px 22px rgba(0,0,0,0.08)",
-        }}
-      >
-        <div style={{ fontWeight: 800, color: "#0f172a" }}>Prompt → Agenda • Poster • Email</div>
-        <div style={{ width: 6, height: 6, borderRadius: 999, background: playing ? "#10b981" : "#ef4444", marginLeft: 8 }} />
-        <button onClick={() => (playing ? pause() : play())} style={{ border: "none", background: "#f1f5f9", borderRadius: 8, padding: "6px 10px", cursor: "pointer" }}>
-          {playing ? "Pause" : "Play"}
+      <div style={styles.controlsWrap}>
+        <div style={styles.controlsTitle}>Prompt → Agenda • Poster • Email</div>
+        <div
+          style={{
+            ...styles.statusDot,
+            background: playing ? '#10b981' : '#ef4444',
+          }}
+        />
+        <button onClick={() => (playing ? pause() : play())} style={styles.btn}>
+          {playing ? 'Pause' : 'Play'}
         </button>
-        <button onClick={() => restart()} style={{ border: "none", background: "#eef2ff", borderRadius: 8, padding: "6px 10px", cursor: "pointer" }}>
+        <button onClick={() => restart()} style={styles.btnAlt}>
           Restart
         </button>
       </div>
 
-      {/* PROMPT: Always visible. Type on step 0; static thereafter */}
+      {/* Prompt */}
       <PromptBubble prompt={prompt} isTyping={step === 0} />
 
-      {/* Stage 1: “Thinking” shimmer */}
+      {/* Stage 1: Thinking shimmer */}
       <AnimatePresence mode="wait">
         {step === 1 && (
           <motion.div
@@ -243,44 +168,20 @@ const Slide13: React.FC = () => {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.5, ease: EASE_SOFT }}
-            style={{
-              width: 920,
-              maxWidth: "92vw",
-              height: 140,
-              borderRadius: 16,
-              background:
-                "linear-gradient(90deg, rgba(226,232,240,0.6) 25%, rgba(203,213,225,0.8) 37%, rgba(226,232,240,0.6) 63%)",
-              backgroundSize: "400% 100%",
-              border: "1px solid rgba(0,0,0,0.06)",
-              position: "relative",
-              overflow: "hidden",
-            }}
+            transition={thinkingEnter}
+            style={styles.thinkingWrap}
           >
             <motion.div
-              animate={{ backgroundPositionX: ["0%", "100%"] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
-              style={{ position: "absolute", inset: 0, background: "inherit" }}
+              animate={{ backgroundPositionX: ['0%', '100%'] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: 'linear' }}
+              style={styles.thinkingBgFill}
             />
-            <div
-              style={{
-                position: "absolute",
-                bottom: 12,
-                left: 12,
-                color: "#334155",
-                fontWeight: 600,
-                background: "rgba(255,255,255,0.75)",
-                padding: "6px 10px",
-                borderRadius: 8,
-              }}
-            >
-              Thinking… organizing tasks…
-            </div>
+            <div style={styles.thinkingLabel}>Thinking… organizing tasks…</div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Stage 2: Split into three outputs */}
+      {/* Stage 2: Three outputs */}
       <AnimatePresence mode="wait">
         {step === 2 && (
           <motion.div
@@ -288,19 +189,12 @@ const Slide13: React.FC = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.55, ease: EASE_SOFT }}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, minmax(220px, 1fr))",
-              gap: 16,
-              width: 920,
-              maxWidth: "92vw",
-              alignItems: "stretch",
-            }}
+            transition={outputsEnter}
+            style={styles.outputsGrid}
           >
-            {/* 📋 Agenda */}
+            {/* Agenda */}
             <Card title="Agenda" badge="📋" bg="linear-gradient(180deg,#ffffff, #f8fafc)" border="rgba(0,0,0,0.06)" delay={0.02}>
-              <ul style={{ paddingLeft: 18, margin: 0 }}>
+              <ul style={styles.agendaList}>
                 <li>3:00 PM — Welcome & icebreakers</li>
                 <li>3:30 PM — Team challenge</li>
                 <li>4:30 PM — Snacks & awards</li>
@@ -308,32 +202,14 @@ const Slide13: React.FC = () => {
               </ul>
             </Card>
 
-            {/* 🎨 Poster (color card) */}
+            {/* Poster */}
             <Card title="Poster" badge="🎨" bg="linear-gradient(180deg,#0ea5e9 0%, #06b6d4 60%, #fde68a 100%)" border="rgba(14,165,233,0.35)" delay={0.14}>
-              <div
-                style={{
-                  borderRadius: 12,
-                  height: 130,
-                  background: "linear-gradient(180deg, rgba(255,255,255,0.2), rgba(0,0,0,0.12))",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
-                {/* Decorative sun + mountains (CSS art) */}
+              <div style={styles.posterCanvas}>
                 <motion.div
                   initial={{ scale: 0.85, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, ease: EASE_SOFT, delay: 0.05 }}
-                  style={{
-                    position: "absolute",
-                    top: 10,
-                    left: 14,
-                    width: 50,
-                    height: 50,
-                    borderRadius: "50%",
-                    background: "radial-gradient(circle,#fde68a 0%, #f59e0b 70%, rgba(0,0,0,0) 71%)",
-                    filter: "blur(0.5px)",
-                  }}
+                  style={styles.posterSun}
                 />
                 {[0, 1].map((m) => (
                   <motion.div
@@ -342,38 +218,29 @@ const Slide13: React.FC = () => {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.45, ease: EASE_SOFT, delay: 0.1 + m * 0.05 }}
                     style={{
-                      position: "absolute",
+                      ...styles.posterMountainBase,
                       bottom: -8 + m * 6,
                       left: m * 16,
-                      right: 0,
                       height: 80 + m * 18,
                       background: `linear-gradient(180deg, rgba(2,6,23,${0.25 + m * 0.18}) 0%, rgba(2,6,23,${0.55 + m * 0.18}) 100%)`,
                       clipPath: `polygon(0% 100%, ${16 + m * 6}% 60%, ${30 + m * 7}% 42%, ${44 + m * 8}% 70%, 100% 100%)`,
                     }}
                   />
                 ))}
-                {/* Sweep gloss */}
                 <motion.div
-                  initial={{ x: "-120%" }}
-                  animate={{ x: "120%" }}
-                  transition={{ duration: 1.6, ease: "linear", repeat: Infinity, delay: 0.2 }}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    bottom: 0,
-                    width: "28%",
-                    background: "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0) 100%)",
-                    transform: "skewX(-10deg)",
-                  }}
+                  initial={{ x: '-120%' }}
+                  animate={{ x: '120%' }}
+                  transition={{ duration: 1.6, ease: 'linear', repeat: Infinity, delay: 0.2 }}
+                  style={styles.posterGloss}
                 />
               </div>
-              <div style={{ marginTop: 8, fontWeight: 700, color: "#0f172a" }}>“Team Day • Friday 3–5 PM”</div>
+              <div style={styles.posterCaption}>“Team Day • Friday 3–5 PM”</div>
             </Card>
 
-            {/* 📧 Email invite */}
+            {/* Email Invite */}
             <Card title="Email Invite" badge="📧" bg="linear-gradient(180deg,#ffffff, #f8fafc)" border="rgba(0,0,0,0.06)" delay={0.26}>
-              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", background: "#f1f5f9", padding: 10, borderRadius: 10 }}>
-                <div style={{ opacity: 0.8 }}>Subject: You’re invited — Team Event (Fri)</div>
+              <div style={styles.emailBlock}>
+                <div style={styles.emailDim}>Subject: You’re invited — Team Event (Fri)</div>
                 <div style={{ height: 8 }} />
                 <div>Hello team,</div>
                 <div>Join us this Friday 3–5 PM for games, snacks, and awards.</div>
@@ -386,7 +253,7 @@ const Slide13: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Stage 3: CTA / Message */}
+      {/* Stage 3: CTA */}
       <AnimatePresence mode="wait">
         {step === 3 && (
           <motion.div
@@ -394,21 +261,11 @@ const Slide13: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.45, ease: EASE_SOFT }}
-            style={{
-              marginTop: 10,
-              background: "rgba(255,255,255,0.95)",
-              border: "1px solid rgba(0,0,0,0.06)",
-              borderRadius: 14,
-              padding: "12px 16px",
-              boxShadow: "0 12px 28px rgba(0,0,0,0.12)",
-              maxWidth: 920,
-            }}
+            transition={ctaEnter}
+            style={styles.cta}
           >
-            <div style={{ fontWeight: 800, color: "#0f172a", marginBottom: 4 }}>
-              One prompt, many outputs — that’s Generative AI’s superpower.
-            </div>
-            <div style={{ color: "#334155" }}>
+            <div style={styles.ctaTitle}>One prompt, many outputs — that’s Generative AI’s superpower.</div>
+            <div style={styles.ctaText}>
               Ask once. Get <strong>agenda</strong>, <strong>poster</strong>, and <strong>email</strong> ready to go — then refine with simple edits.
             </div>
           </motion.div>
@@ -416,9 +273,7 @@ const Slide13: React.FC = () => {
       </AnimatePresence>
 
       {/* Footer hint */}
-      <div style={{ marginTop: 12, fontSize: 12, color: "#94a3b8" }}>
-        Auto-plays when visible • Hover to pause
-      </div>
+      <div style={styles.footerHint}>Auto-plays when visible • Hover to pause</div>
     </motion.div>
   );
 };

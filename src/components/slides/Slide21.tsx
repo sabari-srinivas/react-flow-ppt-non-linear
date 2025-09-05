@@ -1,46 +1,32 @@
-import { motion } from 'framer-motion';
-import { slideContainer } from '../../styles/slideStyles';
+import { motion } from "framer-motion";
+import { slideContainer } from "../../styles/slideStyles";
+import {
+  slide21Container,
+  titleStyle,
+  subtitleStyle,
+  titleVariants,
+  subtitleVariants,
+} from "../../styles/slide21.bundle";
 
 const Slide21 = () => {
   return (
-    <div
-      style={{
-        ...slideContainer,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        padding: '40px',
-        height: '100%',
-      }}
-    >
+    <div style={{ ...slideContainer, ...slide21Container }}>
       {/* Title */}
       <motion.h1
-        style={{
-          fontSize: '5rem',
-          fontWeight: 'bold',
-          marginBottom: '20px',
-          color: '#0d1b2a',
-        }}
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
+        style={titleStyle}
+        variants={titleVariants}
+        initial="initial"
+        animate="animate"
       >
         Agentic AI
       </motion.h1>
 
       {/* Subtitle */}
       <motion.p
-        style={{
-          fontSize: '2rem',
-          fontWeight: 500,
-          marginTop: '10px',
-          color: '#1b263b',
-        }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.3 }}
+        style={subtitleStyle}
+        variants={subtitleVariants}
+        initial="initial"
+        animate="animate"
       >
         Autonomous AI Systems
       </motion.p>

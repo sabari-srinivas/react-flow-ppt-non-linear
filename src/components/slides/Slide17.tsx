@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, cubicBezier } from "framer-motion";
 import { slideContainer, titleStyle } from "../../styles/slideStyles";
+import { S17 } from "../../styles/slide17.bundle";
 import mistyVideo from "../../Misty_Forest_Sunrise_Cinematic_Shot.mp4";
+
+// use cubicBezier to satisfy TS-friendly easing if needed
+const EASE_OUT = cubicBezier(0.16, 1, 0.3, 1);
 
 const promptText = `A cinematic shot of a young man walking through a misty forest at sunrise. The golden rays of sunlight filter through tall pine trees, creating dramatic beams of light. The camera slowly tracks forward from behind, with a smooth dolly effect, adding depth and atmosphere. The mood is calm, mystical, and inspiring, with soft natural colors and realistic textures. Ultra-detailed, photorealistic, 4K quality`;
 
@@ -17,24 +21,21 @@ function useDocumentVisible() {
 
 const Slide17: React.FC = () => {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const inView = useInView(rootRef, { amount: 0.6 }); // starts when ≥60% visible
+  const inView = useInView(rootRef, { amount: 0.6 });
   const pageVisible = useDocumentVisible();
 
   const [displayedText, setDisplayedText] = useState("");
   const [typing, setTyping] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
 
-  // Start typing only when in view & tab visible; reset when out of view so it replays on revisit
+  // type when visible; reset when hidden/out of view
   useEffect(() => {
     if (!inView || !pageVisible) {
-      // reset when not in view or tab hidden
       setTyping(false);
       setDisplayedText("");
       setShowVideo(false);
       return;
     }
-
-    // begin typing sequence
     setTyping(true);
     let i = 0;
     const interval = setInterval(() => {
@@ -46,38 +47,9 @@ const Slide17: React.FC = () => {
         const t = setTimeout(() => setShowVideo(true), 700);
         return () => clearTimeout(t);
       }
-      return;
     }, 28);
-
     return () => clearInterval(interval);
   }, [inView, pageVisible]);
-
-  const rowStyle: React.CSSProperties = {
-    width: "100%",
-    maxWidth: "100%",
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 24,
-    alignItems: "stretch",
-    justifyContent: "center",
-    padding: "20px",
-    boxSizing: "border-box",
-  };
-
-  const cardBase: React.CSSProperties = {
-    flex: "1 1 420px",
-    minWidth: 320,
-    maxWidth: 560,
-    background: "#fff",
-    borderRadius: 20,
-    padding: 20,
-    border: "1px solid rgba(0,0,0,0.06)",
-    boxShadow: "0 16px 40px rgba(0,0,0,0.08)",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    position: "relative",
-  };
 
   return (
     <motion.div
@@ -85,84 +57,43 @@ const Slide17: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.6 }}
-      style={{
-        ...slideContainer,
-        background: "linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)",
-        padding: "0",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "auto",
-      }}
+      transition={{ duration: 0.6, ease: EASE_OUT }}
+      style={{ ...slideContainer, ...S17.container }}
     >
       <motion.h2
         initial={{ y: -24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        style={{
-          ...titleStyle,
-          fontSize: "3rem",
-          marginBottom: 28,
-          background:
-            "linear-gradient(90deg, #1e3a8a, #3b82f6, #10b981, #f59e0b)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          textAlign: "center",
-        }}
+        transition={{ duration: 0.6, ease: EASE_OUT }}
+        style={{ ...titleStyle, ...S17.title }}
       >
         Video Generation by Veo3
       </motion.h2>
 
-      <div style={rowStyle}>
+      <div style={S17.row}>
         {/* Prompt card */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           style={{
-            ...cardBase,
+            ...S17.cardBase,
             boxShadow: "0 20px 40px rgba(37, 99, 235, 0.18)",
             border: "2px solid #2563eb",
           }}
         >
-          <div
-            style={{
-              fontSize: "1.35rem",
-              fontWeight: 700,
-              color: "#2563eb",
-              marginBottom: 12,
-            }}
-          >
-            Prompt
-          </div>
+          <div style={S17.cardTitleBlue}>Prompt</div>
 
           <motion.div
             key={inView ? "typing-on" : "typing-off"}
             initial={{ opacity: 0.95 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
-            style={{
-              background: "#eff6ff",
-              border: "1px solid #bfdbfe",
-              borderRadius: 14,
-              padding: "14px 16px",
-              color: "#0f172a",
-              fontFamily:
-                "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-              fontSize: 15,
-              lineHeight: 1.5,
-              minHeight: 180,
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6)",
-              overflowY: "auto",
-            }}
+            style={S17.promptBox}
           >
             {displayedText}
             <span
               style={{
-                opacity: typing ? 0.7 : 0,
+                opacity: typing ? 0.7 : 0, // dynamic
                 transition: "opacity .2s",
                 marginLeft: 2,
               }}
@@ -171,20 +102,13 @@ const Slide17: React.FC = () => {
             </span>
           </motion.div>
 
-          {/* Subtle animated border glow */}
+          {/* blue glow */}
           <motion.div
             aria-hidden
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
-            style={{
-              position: "absolute",
-              inset: -2,
-              borderRadius: 22,
-              pointerEvents: "none",
-              boxShadow:
-                "0 0 0 0 rgba(37,99,235,0.0), 0 0 30px 2px rgba(37,99,235,0.18)",
-            }}
+            style={S17.blueGlow}
           />
         </motion.div>
 
@@ -194,36 +118,14 @@ const Slide17: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
           style={{
-            ...cardBase,
+            ...S17.cardBase,
             boxShadow: "0 20px 40px rgba(5, 150, 105, 0.18)",
             border: "2px solid #059669",
           }}
         >
-          <div
-            style={{
-              fontSize: "1.35rem",
-              fontWeight: 700,
-              color: "#059669",
-              marginBottom: 12,
-            }}
-          >
-            Generated Video
-          </div>
+          <div style={S17.cardTitleGreen}>Generated Video</div>
 
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              borderRadius: 14,
-              overflow: "hidden",
-              background: "#0b1220",
-              border: "1px solid rgba(0,0,0,0.06)",
-              minHeight: 180,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <div style={S17.videoShell}>
             {showVideo ? (
               <motion.video
                 key="video"
@@ -232,38 +134,27 @@ const Slide17: React.FC = () => {
                 transition={{ duration: 0.6 }}
                 src={mistyVideo}
                 controls
-                style={{ width: "100%", height: "auto", display: "block" }}
+                style={S17.videoEl}
               />
             ) : (
               <motion.div
                 initial={{ opacity: 0.6 }}
                 animate={{ opacity: 1 }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 1.2,
-                  repeatType: "mirror",
-                }}
-                style={{ color: "#cbd5e1", fontSize: 14 }}
+                transition={{ repeat: Infinity, duration: 1.2, repeatType: "mirror" }}
+                style={S17.loadingText}
               >
                 Preparing preview…
               </motion.div>
             )}
           </div>
 
-          {/* Subtle animated border glow */}
+          {/* green glow */}
           <motion.div
             aria-hidden
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.35 }}
-            style={{
-              position: "absolute",
-              inset: -2,
-              borderRadius: 22,
-              pointerEvents: "none",
-              boxShadow:
-                "0 0 0 0 rgba(5,150,105,0.0), 0 0 30px 2px rgba(5,150,105,0.18)",
-            }}
+            style={S17.greenGlow}
           />
         </motion.div>
       </div>

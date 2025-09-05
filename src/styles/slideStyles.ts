@@ -9,7 +9,7 @@ export const slideContainer = {
   padding: '40px',
   boxSizing: 'border-box' as const,
   textAlign: 'center' as const,
-  background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%)',
+  background: 'white', // white container
   borderRadius: '12px',
   overflow: 'hidden',
   position: 'relative' as const,
@@ -28,38 +28,38 @@ export const fullBleedContainer = {
 // Typography styles
 export const titleStyle = {
   fontSize: '4.5rem',
-  color: '#1a365d',
+  color: '#000000', // black
   margin: '0 0 20px 0',
   fontWeight: 700,
   lineHeight: 1.2,
   textShadow: '0 2px 4px rgba(0,0,0,0.1)',
-  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
 
 export const sectionTitleStyle = {
   ...titleStyle,
   fontSize: '3.5rem',
   marginBottom: '30px',
-  color: '#2d3748',
 };
 
 export const subtitleStyle = {
   fontSize: '2rem',
-  color: '#4a5568',
+  color: '#000000', // black
   margin: '0 0 40px 0',
   fontWeight: 400,
   maxWidth: '90%',
   lineHeight: 1.4,
-  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
 
 export const bodyTextStyle = {
   fontSize: '1.6rem',
-  color: '#4a5568',
+  color: '#000000', // black
   lineHeight: 1.6,
   margin: '0 0 20px 0',
   maxWidth: '1000px',
   textAlign: 'left' as const,
+  fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
 
 // Layout containers
@@ -170,24 +170,27 @@ export const imageCardStyle = {
 // Text styles for cards
 export const cardTitleStyle = {
   fontSize: '1.8rem',
-  color: '#2d3748',
+  color: '#000000', // black
   margin: '0 0 15px 0',
   fontWeight: 600,
   lineHeight: 1.3,
+  fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
 
 export const cardSubtitleStyle = {
   fontSize: '1.4rem',
-  color: '#4a5568',
+  color: '#000000', // black
   margin: '0 0 15px 0',
   fontWeight: 500,
+  fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
 
 export const cardTextStyle = {
   fontSize: '1.2rem',
-  color: '#4a5568',
+  color: '#000000', // black
   lineHeight: 1.6,
   margin: 0,
+  fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
 
 // Utility classes

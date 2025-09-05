@@ -1,51 +1,42 @@
+'use client';
+
 import { motion } from "framer-motion";
 import { slideContainer, titleStyle } from "../../styles/slideStyles";
+import {
+  slide15Container,
+  slide15Title,
+  modelsGrid,
+  cardStyle,
+  h3Style,
+  descStyle,
+  tokenTile,
+  summaryText,
+  rootFade,
+  titleIn,
+  cardIn,
+  arrowWiggleProps,
+  getBoxOscillateProps,
+  getDiffusionSquareProps,
+  getTransformersPulseProps,
+  summaryIn,
+} from "../../styles/slide15.bundle";
 
 const Slide15 = () => {
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.8 }}
-      style={{
-        ...slideContainer,
-        background: "linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%)",
-        padding: "40px 60px",
-      }}
+      variants={rootFade}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      style={{ ...slideContainer, ...slide15Container }}
     >
       {/* Title */}
-      <motion.h2
-        initial={{ y: -30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        style={{
-          ...titleStyle,
-          fontSize: "3rem",
-          marginBottom: "50px",
-          background:
-            "linear-gradient(90deg, #7c3aed, #2563eb, #059669, #f59e0b)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        }}
-      >
+      <motion.h2 variants={titleIn} style={{ ...titleStyle, ...slide15Title }}>
         Generative AI Model Types
       </motion.h2>
 
       {/* Grid Layout - Diffusion centered */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateAreas: `
-            "gans diffusion vae"
-            ". transformers ."
-          `,
-          gap: "40px",
-          maxWidth: "1200px",
-          margin: "0 auto",
-          justifyItems: "center",
-        }}
-      >
+      <div style={modelsGrid}>
         {/* GANs */}
         <div style={{ gridArea: "gans" }}>
           <Card
@@ -60,9 +51,9 @@ const Slide15 = () => {
                 position: "relative",
               }}
             >
-              <Box label="Generator" color="#3b82f6" x={[0, 50, 0]} />
+              <Box label="Generator" color="#3b82f6" distance={50} />
               <Arrow />
-              <Box label="Discriminator" color="#ef4444" x={[0, -50, 0]} />
+              <Box label="Discriminator" color="#ef4444" distance={50} reverse />
             </div>
           </Card>
         </div>
@@ -81,12 +72,10 @@ const Slide15 = () => {
                 alignItems: "center",
               }}
             >
-              {[0.2, 0.5, 1].map((opacity, i) => (
+              {[0, 1, 2].map((i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0.2 }}
-                  animate={{ opacity }}
-                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+                  {...getDiffusionSquareProps(i)}
                   style={{
                     width: 60,
                     height: 60,
@@ -112,7 +101,7 @@ const Slide15 = () => {
                 justifyContent: "center",
               }}
             >
-              <Box label="Encoder" color="#10b981" x={[0, 40]} />
+              <Box label="Encoder" color="#10b981" distance={40} />
               <Arrow />
               <motion.div
                 style={{
@@ -126,7 +115,7 @@ const Slide15 = () => {
                 transition={{ duration: 2, repeat: Infinity }}
               />
               <Arrow />
-              <Box label="Decoder" color="#f59e0b" x={[0, -40]} />
+              <Box label="Decoder" color="#f59e0b" distance={40} reverse />
             </div>
           </Card>
         </div>
@@ -148,25 +137,9 @@ const Slide15 = () => {
             >
               {["A", "B", "C", "D", "E", "F"].map((token, i) => (
                 <motion.div
-                  key={i}
-                  animate={{ scale: [1, 1.3, 1] }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    delay: i * 0.2,
-                  }}
-                  style={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: 10,
-                    background: "#7c3aed",
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                  }}
+                  key={token}
+                  {...getTransformersPulseProps(i)}
+                  style={tokenTile}
                 >
                   {token}
                 </motion.div>
@@ -177,27 +150,15 @@ const Slide15 = () => {
       </div>
 
       {/* Closing Summary */}
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 1 }}
-        style={{
-          marginTop: "60px",
-          fontSize: "1.2rem",
-          fontWeight: 500,
-          color: "#1f2937",
-          textAlign: "center",
-          maxWidth: "800px",
-          marginInline: "auto",
-        }}
-      >
-        Different models, same mission: <span style={{ color: "#2563eb" }}>teaching machines to create</span> — whether by competing, compressing, attending, or refining.
+      <motion.p variants={summaryIn} style={summaryText}>
+        Different models, same mission:{" "}
+        <span style={{ color: "#2563eb" }}>teaching machines to create</span> — whether by competing, compressing, attending, or refining.
       </motion.p>
     </motion.div>
   );
 };
 
-/* 🔹 Reusable Card wrapper */
+/* ────────── Content-only subcomponents (no CSS/animation definitions here) ────────── */
 const Card = ({
   title,
   children,
@@ -208,41 +169,30 @@ const Card = ({
   desc: string;
 }) => (
   <motion.div
-    initial={{ scale: 0.9, opacity: 0 }}
-    whileInView={{ scale: 1, opacity: 1 }}
-    transition={{ duration: 0.7 }}
-    style={{
-      background: "white",
-      borderRadius: "16px",
-      padding: "25px",
-      boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
-      textAlign: "center",
-      width: 320,
-    }}
+    variants={cardIn}
+    initial="initial"
+    whileInView="whileInView"
+    style={cardStyle}
   >
-    <h3 style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: "20px" }}>
-      {title}
-    </h3>
+    <h3 style={h3Style}>{title}</h3>
     {children}
-    <p style={{ marginTop: "20px", fontSize: "0.95rem", color: "#374151" }}>
-      {desc}
-    </p>
+    <p style={descStyle}>{desc}</p>
   </motion.div>
 );
 
-/* 🔹 Reusable Box */
 const Box = ({
   label,
   color,
-  x,
+  distance = 40,
+  reverse = false,
 }: {
   label: string;
   color: string;
-  x: number[];
+  distance?: number;
+  reverse?: boolean;
 }) => (
   <motion.div
-    animate={{ x }}
-    transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+    {...getBoxOscillateProps(distance, reverse)}
     style={{
       width: 110,
       height: 60,
@@ -260,7 +210,6 @@ const Box = ({
   </motion.div>
 );
 
-/* 🔹 Animated Arrow (SVG for clarity) */
 const Arrow = () => (
   <motion.svg
     width="30"
@@ -268,8 +217,7 @@ const Arrow = () => (
     viewBox="0 0 30 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    animate={{ x: [0, 5, 0] }}
-    transition={{ duration: 1.5, repeat: Infinity }}
+    {...arrowWiggleProps}
     style={{ margin: "0 10px" }}
   >
     <path

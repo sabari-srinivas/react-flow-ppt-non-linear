@@ -4,69 +4,26 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { slideContainer } from '../../styles/slideStyles';
 
-// ---------- Types ----------
-type Side = 'left' | 'right';
-
-type BoxSpec = {
-  side: Side;
-  icon: string;
-  text: string;
-  color: string; // bg color for the card
-  delay: number;
-};
-
-// ---------- Styles & Constants ----------
-const CARD_W = 260;
-const CARD_H = 58;
-
-const cardBase: React.CSSProperties = {
-  position: 'relative',
-  width: CARD_W,
-  height: CARD_H,
-  borderRadius: 10,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '10px 14px',
-  fontSize: '1rem',
-  fontWeight: 600,
-  color: '#fff',
-  boxShadow: '0 8px 22px rgba(0,0,0,0.12)',
-  overflow: 'hidden',
-  cursor: 'pointer',
-};
-
-const brainSize = 180;
-
-// Thicker, more visible connectors (no dots needed now)
-const CONNECTOR = {
-  ACTIVE: 2.5,
-  INACTIVE: 1.5,
-};
-
-// Typing helper
-const TypingText: React.FC<{ text: string; speed?: number; restartKey?: string | number }> = ({
-  text,
-  speed = 18,
-  restartKey,
-}) => {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    setCount(0);
-    if (!text) return;
-    const id = setInterval(() => {
-      setCount((c) => {
-        if (c >= text.length) {
-          clearInterval(id);
-          return c;
-        }
-        return c + 1;
-      });
-    }, speed);
-    return () => clearInterval(id);
-  }, [text, speed, restartKey]);
-  return <span>{text.slice(0, count)}</span>;
-};
+import {
+  BoxSpec,
+  Side,
+  AnchorState,
+  styles,
+  CARD_W,
+  CARD_H,
+  CONNECTOR,
+  brainSize,
+  h2Intro,
+  brainIntro,
+  brainConicSpin,
+  cardEnter,
+  cardHover,
+  glossySweepMotion,
+  activeGlow,
+  panelPresence,
+  TypingText,
+  ConnectorOverlay,
+} from '../../styles/slide7.bundle';
 
 export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThicker() {
   const left: BoxSpec[] = [
@@ -86,7 +43,6 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
     { side: 'right', icon: 'ℹ️', text: 'Information', delay: 0.95, color: '#2c3e94' },
   ];
 
-  // Example stories (pair-wise)
   const stories = useMemo(
     () => [
       {
@@ -117,27 +73,18 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
     []
   );
 
-  // State: which pair is active, and whether each panel is shown
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [showUser, setShowUser] = useState(false);
-  const [showAI, setShowAI] = useState(false);
+  const [showAI,   setShowAI]   = useState(false);
 
-  // Refs for precise connector anchoring
   const containerRef = useRef<HTMLDivElement | null>(null);
   const leftRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const rightRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const brainRef = useRef<HTMLDivElement | null>(null);
 
-  // Normalized (0–100) connector anchors computed from DOM
-  const [anchors, setAnchors] = useState<{
-    left: { x: number; y: number }[];
-    right: { x: number; y: number }[];
-    brainLx: number;
-    brainRx: number;
-    brainCy: number;
-  } | null>(null);
+  const [anchors, setAnchors] = useState<AnchorState>(null);
 
-  // Compute anchors on mount/resize
+  // Compute anchors on mount/resize (unchanged math, moved helpers in bundle)
   useEffect(() => {
     const compute = () => {
       if (!containerRef.current || !brainRef.current) return;
@@ -203,14 +150,12 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
     };
   }, []);
 
-  // On click left card -> show user panel immediately; schedule AI panel
   const handleLeftClick = (idx: number) => {
     setActiveIndex(idx);
     setShowUser(true);
     setShowAI(false);
   };
 
-  // When user panel shows, bring AI panel after delay (both remain visible)
   useEffect(() => {
     if (!showUser || activeIndex === null) return;
     const userText = stories[activeIndex].user;
@@ -219,7 +164,7 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
     return () => clearTimeout(id);
   }, [showUser, activeIndex, stories]);
 
-  // ----- Card renderer -----
+  // Card renderer (styles + motion imported)
   const renderCard = (
     b: BoxSpec,
     idx: number,
@@ -233,38 +178,21 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
       <motion.button
         ref={refCB}
         key={`${side}-${idx}`}
-        initial={{ opacity: 0, x: side === 'left' ? -40 : 40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: b.delay }}
-        whileHover={{
-          scale: 1.04,
-          rotate: side === 'left' ? -1.5 : 1.5,
-          boxShadow: `0 12px 30px ${b.color}66`,
-        }}
+        initial={cardEnter(side, b.delay).initial}
+        animate={cardEnter(side, b.delay).animate}
+        transition={cardEnter(side, b.delay).transition}
+        whileHover={cardHover(side, b.color)}
         onClick={() => side === 'left' && handleLeftClick(idx)}
-        style={{
-          ...cardBase,
-          background: b.color,
-          outline: 'none',
-          border: 'none',
-          cursor: side === 'left' ? 'pointer' : 'default',
-        }}
+        style={{ ...styles.cardBase, background: b.color, outline: 'none', border: 'none', cursor: side === 'left' ? 'pointer' : 'default' }}
       >
-        {/* active glow */}
         <AnimatePresence>
           {(isLeftActive || isRightActive) && (
             <motion.div
               key="active-glow"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              style={{
-                position: 'absolute',
-                inset: -2,
-                borderRadius: 12,
-                boxShadow: `0 0 0 2px #ffffff88 inset, 0 0 24px ${b.color}`,
-                pointerEvents: 'none',
-              }}
+              initial={activeGlow.initial}
+              animate={activeGlow.animate}
+              exit={activeGlow.exit}
+              style={{ ...activeGlow.style, boxShadow: `0 0 0 2px #ffffff88 inset, 0 0 24px ${b.color}` }}
             />
           )}
         </AnimatePresence>
@@ -272,305 +200,65 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
         {side === 'left' ? (
           <>
             <span style={{ fontSize: 18 }}>{b.icon}</span>
-            <span
-              style={{
-                marginLeft: 10,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                flex: 1,
-                textAlign: 'left',
-              }}
-            >
-              {b.text}
-            </span>
+            <span style={styles.leftText}>{b.text}</span>
           </>
         ) : (
           <>
-            <span
-              style={{
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                flex: 1,
-                textAlign: 'right',
-                marginRight: 10,
-              }}
-            >
-              {b.text}
-            </span>
+            <span style={styles.rightText}>{b.text}</span>
             <span style={{ fontSize: 18 }}>{b.icon}</span>
           </>
         )}
 
-        {/* glossy sweep */}
-        <motion.div
-          aria-hidden
-          style={{
-            position: 'absolute',
-            inset: -2,
-            background:
-              'linear-gradient(120deg, transparent 0%, #ffffff22 40%, #ffffff55 50%, #ffffff22 60%, transparent 100%)',
-            transform: 'translateX(-60%)',
-            mixBlendMode: 'screen',
-          }}
-          animate={{ x: ['-60%', '120%'] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.25 }}
-        />
+        <motion.div aria-hidden style={styles.glossySweep} {...glossySweepMotion(idx)} />
       </motion.button>
     );
   };
 
-  // --- Solid, connected lines (no dots, no draw-on effect) ---
-  const ConnectorOverlay = () => {
-    if (!anchors) return null;
-    const { left: L, right: R, brainLx, brainRx, brainCy } = anchors;
-
-    // helper to make a smooth cubic bezier between two points
-    const cubic = (x1: number, y1: number, x2: number, y2: number) => {
-      const mx = (x1 + x2) / 2;
-      // pull control points toward the middle for a nice “S” curve
-      const c1x = (x1 + mx) / 2;
-      const c2x = (x2 + mx) / 2;
-      return `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
-    };
-
-    return (
-      <svg
-        viewBox="0 0 100 100"
-        width="100%"
-        height="100%"
-        preserveAspectRatio="none"
-        style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}
-      >
-        {/* LEFT -> BRAIN */}
-        {L.map((p, i) => {
-          const isActive = activeIndex === i && (showUser || showAI);
-          const stroke = '#e74c3c';
-          const d = cubic(p.x, p.y, brainLx, brainCy);
-
-          return (
-            <motion.path
-              key={`L-${i}`}
-              d={d}
-              fill="none"
-              stroke={stroke}
-              strokeWidth={isActive ? CONNECTOR.ACTIVE : CONNECTOR.INACTIVE}
-              strokeDasharray="none"
-              strokeOpacity={0.98}
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              vectorEffect="non-scaling-stroke"
-              initial={false}
-              animate={{ opacity: isActive ? 1 : 0.55 }}
-              transition={{ duration: 0.25 }}
-            />
-          );
-        })}
-
-        {/* BRAIN -> RIGHT */}
-        {R.map((p, i) => {
-          const isActive = activeIndex === i && showAI;
-          const stroke = '#2c3e94';
-          const d = cubic(brainRx, brainCy, p.x, p.y);
-
-          return (
-            <motion.path
-              key={`R-${i}`}
-              d={d}
-              fill="none"
-              stroke={stroke}
-              strokeWidth={isActive ? CONNECTOR.ACTIVE : CONNECTOR.INACTIVE}
-              strokeDasharray="none"
-              strokeOpacity={0.98}
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              vectorEffect="non-scaling-stroke"
-              initial={false}
-              animate={{ opacity: isActive ? 1 : 0.55 }}
-              transition={{ duration: 0.25 }}
-            />
-          );
-        })}
-      </svg>
-    );
-  };
-
   return (
-    <motion.div
-      className="slide-container"
-      style={{
-        ...slideContainer,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%)',
-        padding: '40px 60px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <motion.h2
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        style={{
-          fontSize: '2.2rem',
-          color: '#1a237e',
-          marginBottom: '2rem',
-          textAlign: 'center',
-          fontWeight: 700,
-          zIndex: 2,
-        }}
-      >
+    <motion.div className="slide-container" style={{ ...slideContainer, ...styles.slideRoot }}>
+      <motion.h2 initial={h2Intro.initial} animate={h2Intro.animate} transition={h2Intro.transition} style={styles.h2}>
         Human + AI Collaboration
       </motion.h2>
 
       {/* Measurement frame wraps overlay + content */}
-      <div
-        ref={containerRef}
-        style={{ position: 'relative', width: '100%', maxWidth: 1200, padding: '0 24px' }}
-      >
+      <div ref={containerRef} style={styles.measureFrame}>
         {/* Connector overlay (behind content) */}
-        <ConnectorOverlay />
+        <ConnectorOverlay anchors={anchors} activeIndex={activeIndex} showUser={showUser} showAI={showAI} />
 
         {/* Content grid above overlay */}
-        <div
-          style={{
-            position: 'relative',
-            display: 'grid',
-            gridTemplateColumns: '1fr auto 1fr',
-            alignItems: 'center',
-            justifyItems: 'center',
-            columnGap: 96,
-            zIndex: 2,
-          }}
-        >
+        <div style={styles.grid}>
           {/* Left column */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 16 }}>
+          <div style={styles.leftCol}>
             {left.map((b, idx) => renderCard(b, idx, 'left', (el) => (leftRefs.current[idx] = el)))}
           </div>
 
           {/* Center brain */}
-          <motion.div
-            ref={brainRef}
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            style={{
-              width: brainSize,
-              height: brainSize,
-              borderRadius: '50%',
-              border: '2px solid #333',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1rem',
-              background: '#fff',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
-            }}
-          >
-            <motion.div
-              aria-hidden
-              style={{
-                position: 'absolute',
-                inset: 0,
-                borderRadius: '50%',
-                mixBlendMode: 'multiply',
-                opacity: 0.5,
-                background:
-                  'conic-gradient(from 0deg, rgba(231,76,60,.12), rgba(44,62,148,.12), rgba(231,76,60,.12))',
-              }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
-            />
+          <motion.div ref={brainRef} initial={brainIntro.initial} animate={brainIntro.animate} transition={brainIntro.transition} style={styles.brainWrap}>
+            <motion.div aria-hidden style={styles.brainConic} animate={brainConicSpin.animate} transition={brainConicSpin.transition} />
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-              <div
-                style={{
-                  flex: 1,
-                  background: '#e74c3c',
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 800,
-                  borderTopLeftRadius: '50%',
-                  borderBottomLeftRadius: '50%',
-                }}
-              >
-                HUMAN
-              </div>
+              <div style={styles.brainSplitLeft}>HUMAN</div>
               <div style={{ width: 1, background: 'rgba(0,0,0,0.08)' }} />
-              <div
-                style={{
-                  flex: 1,
-                  background: '#2c3e94',
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 800,
-                  borderTopRightRadius: '50%',
-                  borderBottomRightRadius: '50%',
-                }}
-              >
-                AI
-              </div>
+              <div style={styles.brainSplitRight}>AI</div>
             </div>
           </motion.div>
 
           {/* Right column */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 16 }}>
+          <div style={styles.rightCol}>
             {right.map((b, idx) => renderCard(b, idx, 'right', (el) => (rightRefs.current[idx] = el)))}
           </div>
         </div>
       </div>
 
       {/* Dual story panels */}
-      <div
-        style={{
-          marginTop: 28,
-          width: 'min(1100px, 92%)',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 14,
-        }}
-      >
+      <div style={styles.panelsGrid}>
         <AnimatePresence>
           {activeIndex !== null && showUser && (
-            <motion.div
-              key={`user-${activeIndex}`}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.3 }}
-              style={{
-                background: '#fff',
-                borderRadius: 14,
-                boxShadow: '0 14px 34px rgba(0,0,0,0.12)',
-                border: '1px solid rgba(0,0,0,0.06)',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  padding: '12px 16px',
-                  background: 'linear-gradient(90deg, #ffe7e3, #fff)',
-                  borderBottom: '1px solid rgba(0,0,0,0.06)',
-                  fontWeight: 700,
-                  color: '#111827',
-                }}
-              >
+            <motion.div key={`user-${activeIndex}`} initial={panelPresence.initial} animate={panelPresence.animate} exit={panelPresence.exit} transition={panelPresence.transition} style={styles.panelCard}>
+              <div style={styles.panelHeaderUser}>
                 <span style={{ fontSize: 18 }}>{left[activeIndex].icon}</span>
                 <span>{left[activeIndex].text} — User request</span>
               </div>
-              <div style={{ padding: '16px 18px', color: '#374151', lineHeight: 1.55, fontSize: 16 }}>
+              <div style={styles.panelBody}>
                 <TypingText text={stories[activeIndex].user} restartKey={`u-${activeIndex}`} />
               </div>
             </motion.div>
@@ -579,36 +267,12 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
 
         <AnimatePresence>
           {activeIndex !== null && showAI && (
-            <motion.div
-              key={`ai-${activeIndex}`}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.3 }}
-              style={{
-                background: '#fff',
-                borderRadius: 14,
-                boxShadow: '0 14px 34px rgba(0,0,0,0.12)',
-                border: '1px solid rgba(0,0,0,0.06)',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  padding: '12px 16px',
-                  background: 'linear-gradient(90deg, #e6ecff, #fff)',
-                  borderBottom: '1px solid rgba(0,0,0,0.06)',
-                  fontWeight: 700,
-                  color: '#111827',
-                }}
-              >
+            <motion.div key={`ai-${activeIndex}`} initial={panelPresence.initial} animate={panelPresence.animate} exit={panelPresence.exit} transition={panelPresence.transition} style={styles.panelCard}>
+              <div style={styles.panelHeaderAI}>
                 <span style={{ fontSize: 18 }}>{right[activeIndex].icon}</span>
                 <span>{right[activeIndex].text} — AI output</span>
               </div>
-              <div style={{ padding: '16px 18px', color: '#374151', lineHeight: 1.55, fontSize: 16 }}>
+              <div style={styles.panelBody}>
                 <TypingText text={stories[activeIndex].ai} restartKey={`a-${activeIndex}`} />
               </div>
             </motion.div>
