@@ -171,7 +171,7 @@ const Slide23: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: TRANS.title, ease: EASE_OUT }}
       >
-        Single Agent Workflow — Grocery Order Story
+        Single Agent Workflow - Grocery Order Story
       </motion.h2>
 
       <motion.p

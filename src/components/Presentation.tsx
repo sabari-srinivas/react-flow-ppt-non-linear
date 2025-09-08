@@ -54,7 +54,7 @@ const SlideNode = ({ data, isFocused }: NodeProps<SlideNodeData> & { isFocused: 
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
-    border: data.isHub ? '8px solid black' : '2px solid #ddd',
+    border: 'none',
     borderColor: data.color || '#ddd',
     borderRadius: '8px',
     boxShadow: isFocused ? '0 25px 50px -12px rgba(0, 0, 0, 0.4)' : '0 8px 24px rgba(0,0,0,0.15)',

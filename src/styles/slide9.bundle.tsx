@@ -81,8 +81,8 @@ export const styles = {
     color: '#000000', // black
   } as React.CSSProperties,
 
-  cardTitle: { fontSize: '1.25rem', fontWeight: 800, margin: '0 0 8px 0', color: '#000000' } as React.CSSProperties,
-  cardBlurb: { margin: 0, fontSize: '0.98rem', color: '#000000', lineHeight: 1.5 } as React.CSSProperties,
+  cardTitle: { fontSize: '1.3rem', fontWeight: 800, margin: '0 0 8px 0', color: '#000000' } as React.CSSProperties,
+  cardBlurb: { margin: 0, fontSize: '1.1rem', color: '#000000', lineHeight: 1.5 } as React.CSSProperties,
 
   shimmerBase: {
     position: 'absolute' as const,
@@ -96,7 +96,7 @@ export const styles = {
   bottomHeadline: {
     fontSize: '2.2rem',
     fontWeight: 800,
-    color: '#000000', // black
+    color: '#4e83c3', // black
     textAlign: 'center' as const,
     marginTop: 16,
     textShadow: 'none',
@@ -175,8 +175,8 @@ export const headerIconStyle = (accent: string): React.CSSProperties => ({
   fontSize: 20,
 });
 
-export const headerTitle = { fontSize: '1.2rem', fontWeight: 800, color: '#000000' } as React.CSSProperties;
-export const headerSub   = { fontSize: '0.95rem', color: '#000000' } as React.CSSProperties;
+export const headerTitle = { fontSize: '1.4rem', fontWeight: 700, color: '#000000' } as React.CSSProperties;
+export const headerSub   = { fontSize: '1.1rem', color: '#000000' } as React.CSSProperties;
 
 export const closeBtn = {
   marginLeft: 'auto',
@@ -194,5 +194,5 @@ export const footerTipStyle = (accent: string): React.CSSProperties => ({
   background: `radial-gradient(120px 60px at 20% 0%, ${accent}10, transparent 60%)`,
   border: `1px dashed ${accent}44`,
   color: '#000000',
-  fontSize: 14,
+  fontSize: 18,
 });

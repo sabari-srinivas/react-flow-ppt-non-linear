@@ -18,7 +18,7 @@ export const S17 = {
   title: {
     fontSize: "3rem",
     marginBottom: 28,
-    color: "#000000", // black (replaces gradient text)
+    color: "#4e83c3", // black (replaces gradient text)
     textAlign: "center",
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   } as CSSProperties,
@@ -43,7 +43,7 @@ export const S17 = {
     borderRadius: 20,
     padding: 20,
     border: "1px solid rgba(0,0,0,0.06)",
-    boxShadow: "0 16px 40px rgba(0,0,0,0.08)",
+    
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
@@ -53,7 +53,7 @@ export const S17 = {
   } as CSSProperties,
 
   cardTitleBlue: {
-    fontSize: "1.35rem",
+    fontSize: "1.65rem",
     fontWeight: 700,
     color: "#2563eb",
     marginBottom: 12,
@@ -61,7 +61,7 @@ export const S17 = {
   } as CSSProperties,
 
   cardTitleGreen: {
-    fontSize: "1.35rem",
+    fontSize: "1.65rem",
     fontWeight: 700,
     color: "#059669",
     marginBottom: 12,
@@ -75,10 +75,10 @@ export const S17 = {
     padding: "14px 16px",
     color: "#000000",
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    fontSize: 15,
+    fontSize: 20,
     lineHeight: 1.5,
     minHeight: 180,
-    boxShadow: "inset 0 1px 0 rgba(0,0,0,0.06)",
+    
     overflowY: "auto",
   } as CSSProperties,
 
@@ -87,7 +87,7 @@ export const S17 = {
     inset: -2,
     borderRadius: 22,
     pointerEvents: "none",
-    boxShadow: "0 0 0 0 rgba(37,99,235,0.0), 0 0 30px 2px rgba(37,99,235,0.18)",
+    
   } as CSSProperties,
 
   greenGlow: {
@@ -95,7 +95,7 @@ export const S17 = {
     inset: -2,
     borderRadius: 22,
     pointerEvents: "none",
-    boxShadow: "0 0 0 0 rgba(5,150,105,0.0), 0 0 30px 2px rgba(5,150,105,0.18)",
+    
   } as CSSProperties,
 
   videoCardBase: {

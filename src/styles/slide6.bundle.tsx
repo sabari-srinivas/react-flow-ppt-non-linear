@@ -9,7 +9,7 @@ export const COLORS = {
   practitioner: "#2e7d32" // green
 };
 
-/* ================== Icons (unchanged) ================== */
+/* ================== Icons (Updated Tech Lead & Practitioner) ================== */
 type IconProps = { color?: string };
 
 export const DataEngineerIcon: React.FC<IconProps> = ({ color = COLORS.buildAI }) => (
@@ -30,22 +30,19 @@ export const DataScientistIcon: React.FC<IconProps> = ({ color = COLORS.buildAI 
 );
 
 export const AIEngineerIcon: React.FC<IconProps> = ({ color = COLORS.buildAI }) => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <text x="6" y="12" fontFamily="monospace" fontSize="6" fill={color}>1010</text>
-    <text x="6" y="18" fontFamily="monospace" fontSize="6" fill={color}>1010</text>
-  </svg>
+    <svg width="48" height="48" viewBox="0 0 24 24" fill={color} stroke={color} strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
+        <text x="5" y="11" fontFamily="monospace" fontSize="7">1010</text>
+        <text x="5" y="19" fontFamily="monospace" fontSize="7">1010</text>
+    </svg>
 );
 
 export const DeveloperIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI }) => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-    <path d="M8 21h8" />
-    <path d="M12 17v4" />
-    <polyline points="7 8 9 10 7 12" />
-    <polyline points="17 8 15 10 17 12" />
-  </svg>
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.56a1 1 0 0 1-.8 1.44H3.52a1 1 0 0 1-.8-1.44L4 16" />
+    </svg>
 );
 
+// New Icon: Tie
 export const TechLeadIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI }) => (
   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M8 5l-3 3 3 3" />
@@ -55,15 +52,14 @@ export const TechLeadIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI }
 );
 
 export const ArchitectIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI }) => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M2 9l10 6 10-6-10-6-10 6z" />
-    <path d="M2 15l10 6 10-6" />
-    <path d="M2 9v6" />
-    <path d="M22 9v6" />
-    <path d="M12 3v18" />
-  </svg>
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 12.38 12 17l10-4.62" />
+        <path d="M2 8.38 12 13l10-4.62" />
+        <path d="M12 2 2 7l10 5 10-5-10-5z" />
+    </svg>
 );
 
+// New Icon: Brain
 export const PractitionerIcon: React.FC<IconProps> = ({ color = COLORS.practitioner }) => (
   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
@@ -86,30 +82,34 @@ export const VibecoderIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI 
 );
 
 export const AIContentGenIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI }) => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="4" width="14" height="16" rx="2" />
-    <path d="M7 8h6M7 12h10M7 16h8" />
-    <path d="M19 4v6l2 2" />
-  </svg>
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
+        <polyline points="10 9 9 9 8 9" />
+    </svg>
 );
 
-/* ================== Styles (updated: Nunito Sans + white + black) ================== */
+
+/* ================== Styles (unchanged) ================== */
 export const styles = {
   containerExtra: {
     display: "flex",
     flexDirection: "column" as const,
     overflow: "hidden" as const,
     position: "relative" as const,
-    background: "white", // was gradient
+    background: "white",
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    color: "#000000", // default text color black
+    color: "#000000",
   },
 
   headerH2: {
-    fontSize: "2rem",
+    fontSize: "2.8rem", 
+    fontWeight: 700, 
     marginBottom: "1.5rem",
     textAlign: "left" as const,
-    color: "#000000", // black (remove gradient text fill)
+    color: "#4E83C3", 
     position: "relative" as const,
     display: "inline-block",
     width: "auto",
@@ -117,13 +117,7 @@ export const styles = {
   },
 
   headerUnderline: {
-    position: "absolute" as const,
-    bottom: 0,
-    left: 0,
-    width: "100%",
-    height: "3px",
-    background: "linear-gradient(90deg, #1a73e8, #34a853)", // keep accent
-    transformOrigin: "left",
+    display: "none", 
   },
 
   mainGrid: {
@@ -152,7 +146,7 @@ export const styles = {
   },
 };
 
-/* ================== Header motion (unchanged values) ================== */
+/* ================== Header motion (unchanged) ================== */
 export const headerMotion = {
   titleInitial: { opacity: 0, y: -20 },
   titleAnimate: { opacity: 1, y: 0 },
@@ -171,7 +165,7 @@ export const shimmerKeyframes = `
 }
 `;
 
-/* ================== Section + Role (same behavior, text black) ================== */
+/* ================== Section + Role (unchanged) ================== */
 type Theme = "blue" | "orange" | "green";
 
 export const themeToColors = (theme: Theme) => {
@@ -180,7 +174,7 @@ export const themeToColors = (theme: Theme) => {
       return {
         headerFrom: "#ffe0cc",
         headerTo: "#fff3e6",
-        headerText: "#000000", // black
+        headerText: "#000000",
         accent: "rgba(255,122,0,0.45)",
         shimmer: "rgba(255, 186, 122, 0.35)",
         captionBg: "rgba(255, 239, 224, 0.9)",
@@ -190,7 +184,7 @@ export const themeToColors = (theme: Theme) => {
       return {
         headerFrom: "#dff3e6",
         headerTo: "#eefaf2",
-        headerText: "#000000", // black
+        headerText: "#000000",
         accent: "rgba(46,125,50,0.45)",
         shimmer: "rgba(178, 223, 186, 0.35)",
         captionBg: "rgba(232, 245, 233, 0.9)",
@@ -200,7 +194,7 @@ export const themeToColors = (theme: Theme) => {
       return {
         headerFrom: "#f0f5ff",
         headerTo: "#e9f0ff",
-        headerText: "#000000", // black
+        headerText: "#000000",
         accent: "rgba(0,112,192,0.45)",
         shimmer: "rgba(120, 170, 240, 0.35)",
         captionBg: "rgba(240, 247, 255, 0.9)",
@@ -225,7 +219,7 @@ export const Role: React.FC<RoleProps> = ({
   <motion.div
     initial={{ opacity: 0, y: 24, scale: 0.98 }}
     animate={active ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 24, scale: 0.98 }}
-    transition={{ duration: durationSec, delay, ease: "easeOut" }} // 5s per card
+    transition={{ duration: durationSec, delay, ease: "easeOut" }}
     style={{
       flex: 1,
       minWidth: 140,
@@ -242,10 +236,10 @@ export const Role: React.FC<RoleProps> = ({
     <div style={{ marginBottom: 10, height: 48, display: "flex", alignItems: "center" }}>{icon}</div>
     <h3
       style={{
-        fontSize: "0.9rem",
+        fontSize: "1.1rem", 
         fontWeight: 800,
         marginBottom: 6,
-        color: "#000000", // black
+        color: "#000000",
         textTransform: "uppercase",
         borderBottom: `2px solid ${accent}`,
         paddingBottom: 4,
@@ -253,7 +247,7 @@ export const Role: React.FC<RoleProps> = ({
     >
       {title}
     </h3>
-    <p style={{ fontSize: "0.8rem", color: "#000000", lineHeight: 1.35, margin: 0 }}>{desc}</p>
+    <p style={{ fontSize: "1rem", color: "#000000", lineHeight: 1.35, margin: 0 }}>{desc}</p>
   </motion.div>
 );
 
@@ -300,8 +294,8 @@ export const Section: React.FC<SectionProps> = ({
         <h3
           style={{
             margin: 0,
-            fontSize: "1.05rem",
-            color: "#000000", // black (override themed text)
+            fontSize: "1.1rem", 
+            color: "#000000",
             fontWeight: 800,
             letterSpacing: "0.3px",
             textTransform: "uppercase" as const,
@@ -350,9 +344,9 @@ export const Section: React.FC<SectionProps> = ({
           padding: "8px 16px",
           borderTop: `1px dashed ${C.captionBorder}`,
           background: C.captionBg,
-          color: "#000000", // black
-          fontSize: "0.9rem",
-          fontWeight: 700,
+          color: "#000000",
+          fontSize: "1rem",
+          fontWeight: 500,
           textAlign: "right" as const,
           display: "flex",
           justifyContent: "flex-end",

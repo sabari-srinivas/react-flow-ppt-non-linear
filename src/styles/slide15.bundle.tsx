@@ -24,8 +24,8 @@ import type {
   /** Title overrides (merge with global titleStyle) */
   export const slide15Title: React.CSSProperties = {
     fontSize: "3rem",
-    marginBottom: "50px",
-    color: "#000000", // black text
+    
+    color: "#4e83c3", // black text
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   };
   
@@ -46,8 +46,9 @@ import type {
   export const cardStyle: React.CSSProperties = {
     background: "#ffffff",
     borderRadius: "16px",
-    padding: "25px",
+    padding: "15px",
     boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+    border: "2px solid #4e83c3",
     textAlign: "center",
     width: 320,
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -55,8 +56,8 @@ import type {
   };
   
   export const h3Style: React.CSSProperties = {
-    fontSize: "1.4rem",
-    fontWeight: 600,
+    fontSize: "1.5rem",
+    fontWeight: 700,
     marginBottom: "20px",
     color: "#000000",
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -64,7 +65,7 @@ import type {
   
   export const descStyle: React.CSSProperties = {
     marginTop: "20px",
-    fontSize: "0.95rem",
+    fontSize: "1.1rem",
     color: "#000000",
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   };
@@ -73,7 +74,7 @@ import type {
     width: 60,
     height: 60,
     borderRadius: 10,
-    background: "#000000", // solid black tile background
+    background: "#4e83c3", // solid black tile background
     color: "#ffffff",
     display: "flex",
     alignItems: "center",
@@ -85,7 +86,7 @@ import type {
   
   export const summaryText: React.CSSProperties = {
     marginTop: "60px",
-    fontSize: "1.2rem",
+    fontSize: "1.3rem",
     fontWeight: 500,
     color: "#000000",
     textAlign: "center",

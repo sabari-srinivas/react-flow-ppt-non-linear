@@ -110,16 +110,16 @@ const AIAutonomySlide = () => {
             Human
           </div>
           <div style={styles.barAssist}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>80%</div>
-            <div style={{ fontSize: '0.9rem' }}>Assist</div>
+            <div style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>80%</div>
+            <div style={{ fontSize: '1rem' }}>Assist</div>
           </div>
           <div style={styles.barAugment}>
             <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>19%</div>
-            <div style={{ fontSize: '0.9rem' }}>Augment</div>
+            <div style={{ fontSize: '1rem' }}>Augment</div>
           </div>
           <div style={styles.barTransform}>
             <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>1%</div>
-            <div style={{ fontSize: '0.9rem' }}>Transform</div>
+            <div style={{ fontSize: '1rem' }}>Transform</div>
           </div>
         </motion.div>
 
@@ -144,7 +144,7 @@ const AIAutonomySlide = () => {
                 <div style={element.subType === 'list' ? styles.listCard : styles.cardBase}>
                   {element.subType === 'definition' ? (
                     <>
-                      <h3 style={{ margin: '0 0 10px 0', fontSize: '1.2rem', color: '#1a365d' }}>
+                      <h3 style={{ margin: '0 0 10px 0', fontSize: '1.3rem', color: '#000000' }}>
                         {(element as DefinitionCardElement).title}
                       </h3>
                       <p style={{ margin: 0, fontSize: '1rem', color: '#4a5568' }}>

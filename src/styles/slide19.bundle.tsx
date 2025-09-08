@@ -88,7 +88,7 @@ export const ambientOrbLeftStyle: React.CSSProperties = {
   height: 320,
   borderRadius: '50%',
   filter: 'blur(30px)',
-  background: 'radial-gradient(circle, rgba(59,130,246,0.28), transparent 60%)',
+  
   top: 40,
   left: -80,
   pointerEvents: 'none',
@@ -100,7 +100,7 @@ export const ambientOrbRightStyle: React.CSSProperties = {
   height: 360,
   borderRadius: '50%',
   filter: 'blur(34px)',
-  background: 'radial-gradient(circle, rgba(34,197,94,0.22), transparent 60%)',
+  
   bottom: -60,
   right: -60,
   pointerEvents: 'none',
@@ -110,7 +110,7 @@ export const titleGradientStyle: React.CSSProperties = {
   textAlign: 'center',
   fontSize: 'clamp(2.0rem, 4vw, 3.2rem)',
   marginBottom: 24,
-  background: 'linear-gradient(90deg, #1e3a8a, #3b82f6, #10b981, #f59e0b)',
+  background: 'linear-gradient(90deg,#4e83c3)',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   letterSpacing: 0.2,
@@ -123,7 +123,7 @@ export const subtitleStyle: React.CSSProperties = {
   color: '#000000', // black
   marginTop: -4,
   marginBottom: 28,
-  fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)',
+  fontSize: 'clamp(1.5rem, 1.4vw, 1.05rem)',
   fontFamily:
     "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
@@ -143,7 +143,7 @@ export const cardStyle: React.CSSProperties = {
   fontFamily:
     "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   boxShadow: '0 12px 30px rgba(0,0,0,0.10)',
-  border: '1px solid rgba(0,0,0,0.06)',
+  border: '2px solid #4e83c3',
   padding: '18px 18px 16px',
   display: 'grid',
   gridTemplateRows: 'auto auto auto',
@@ -165,8 +165,8 @@ export const emojiWrapperStyle: React.CSSProperties = {
 };
 
 export const cardHeadingStyle: React.CSSProperties = {
-  fontWeight: 800,
-  fontSize: 'clamp(1.0rem, 1.6vw, 1.05rem)',
+  fontWeight: 700,
+  fontSize: 'clamp(1.3rem, 1.6vw, 1.05rem)',
   color: '#000000',
   letterSpacing: 0.2,
   fontFamily:
@@ -175,7 +175,7 @@ export const cardHeadingStyle: React.CSSProperties = {
 
 export const cardBlurbStyle: React.CSSProperties = {
   color: '#000000',
-  fontSize: 'clamp(0.9rem, 1.4vw, 0.95rem)',
+  fontSize: 'clamp(1rem, 1.4vw, 0.95rem)',
   lineHeight: 1.45,
   fontFamily:
     "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -183,7 +183,7 @@ export const cardBlurbStyle: React.CSSProperties = {
 
 export const bottomHintStyle: React.CSSProperties = {
   marginTop: 24,
-  fontSize: 'clamp(0.9rem, 1.4vw, 1rem)',
+  fontSize: 'clamp(1.2rem, 1.4vw, 1rem)',
   color: '#000000',
   textAlign: 'center',
   fontFamily:

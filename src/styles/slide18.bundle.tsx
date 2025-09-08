@@ -16,7 +16,7 @@ export const SIE = {
 
   title: {
     fontSize: "2.8rem",
-    color: "#000000", // black
+    color: "#4e83c3", // black
     marginBottom: 10,
     textAlign: "center",
     fontFamily:
@@ -46,7 +46,7 @@ export const SIE = {
     justifyContent: "flex-start",
     padding: 24,
     textAlign: "center",
-    border: "1px solid rgba(0,0,0,0.06)",
+    border: "2px solid #4e83c3",
     minHeight: 260,
     margin: "0 auto",
     transition: "all 0.25s ease",
@@ -69,7 +69,7 @@ export const SIE = {
   name: {
     margin: 0,
     color: "#000000", // black
-    fontSize: "1.1rem",
+    fontSize: "1.6rem",
     fontWeight: 700,
     letterSpacing: 0.2,
     fontFamily:
@@ -77,7 +77,7 @@ export const SIE = {
   } as CSSProperties,
 
   desc: {
-    fontSize: "0.92rem",
+    fontSize: "1.2rem",
     marginTop: 8,
     color: "#000000", // black
     lineHeight: 1.45,

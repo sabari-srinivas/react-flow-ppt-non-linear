@@ -62,7 +62,7 @@ export const styles = {
   titleH2: {
     fontSize: '2.5rem',
     marginBottom: 30,
-    color: '#000000', // black
+    color: '#4e83c3', // black
     textAlign: 'center' as const,
   },
 

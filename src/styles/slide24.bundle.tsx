@@ -108,8 +108,8 @@ export const pageStyle: React.CSSProperties = {
 
 export const titleStyle: React.CSSProperties = {
   fontSize: "2.4rem",
-  fontWeight: 800,
-  color: "#000000",
+  fontWeight: 700,
+  color: "#4e83c3",
   margin: 0,
   textAlign: "center",
   fontFamily:
@@ -117,7 +117,7 @@ export const titleStyle: React.CSSProperties = {
 };
 
 export const subtitleStyle: React.CSSProperties = {
-  fontSize: 16,
+  fontSize: 24,
   maxWidth: 840,
   color: "#000000",
   textAlign: "center",
@@ -141,8 +141,8 @@ export const arrowStyle: React.CSSProperties = {
 export const chipBase: React.CSSProperties = {
   padding: "6px 12px",
   borderRadius: 999,
-  fontWeight: 800,
-  fontSize: 12,
+  fontWeight: 500,
+  fontSize: 18,
   border: "1px solid rgba(0,0,0,0.06)",
   display: "inline-flex",
   alignItems: "center",
@@ -198,8 +198,9 @@ export const glowPulse: React.CSSProperties = {
 export const cardEmoji: React.CSSProperties = { fontSize: 28 };
 
 export const cardTitle: React.CSSProperties = {
-  fontWeight: 800,
+  fontWeight: 700,
   marginTop: 6,
+  fontSize: 20,
   color: "#000000",
   fontFamily:
     "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -210,7 +211,7 @@ export const cardList: React.CSSProperties = {
   padding: 0,
   margin: "10px 0 0 0",
   color: "#000000",
-  fontSize: 13,
+  fontSize: 16,
   lineHeight: 1.45,
   textAlign: "left",
   fontFamily:
@@ -237,7 +238,7 @@ export const panelStyle: React.CSSProperties = {
   width: "90%",
   boxShadow: "0 12px 24px rgba(0,0,0,0.25)",
   fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", // monospace for code/text panel
-  fontSize: 13.5,
+  fontSize: 14.5,
   lineHeight: 1.5,
   textAlign: "left",
 };

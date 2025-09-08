@@ -99,9 +99,9 @@ export const pageStyle: React.CSSProperties = {
 };
 
 export const h2Style: React.CSSProperties = {
-  fontSize: "2.4rem",
-  fontWeight: 800,
-  color: "#000000",
+  fontSize: "2.6rem",
+  fontWeight: 700,
+  color: "#4e83c3",
   margin: 0,
   fontFamily:
     "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -110,7 +110,7 @@ export const h2Style: React.CSSProperties = {
 export const subStyle: React.CSSProperties = {
   color: "#000000",
   marginTop: 4,
-  fontSize: 16,
+  fontSize: 23,
   maxWidth: 840,
   fontFamily:
     "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -131,8 +131,8 @@ export const arrowStyle: React.CSSProperties = {
 export const chipBase: React.CSSProperties = {
   padding: "6px 12px",
   borderRadius: 999,
-  fontWeight: 800,
-  fontSize: 12,
+  fontWeight: 500,
+  fontSize: 18,
   border: "1px solid rgba(0,0,0,0.06)",
   display: "inline-flex",
   alignItems: "center",
@@ -204,14 +204,15 @@ export const cardEmoji: React.CSSProperties = {
   fontSize: 28,
 };
 export const cardTitle: React.CSSProperties = {
-  fontWeight: 800,
+  fontWeight: 700,
   marginTop: 6,
+  fontSize: 20,
   color: "#000000",
   fontFamily:
     "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
 export const cardCaption: React.CSSProperties = {
-  fontSize: 13,
+  fontSize: 16,
   color: "#000000",
   marginTop: 6,
   fontFamily:

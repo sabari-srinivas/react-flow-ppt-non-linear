@@ -74,8 +74,8 @@ const Slide6: React.FC = () => {
                 <Role icon={<DeveloperIcon color={COLORS.buildWithAI} />} title="AI DEVELOPER" desc="Uses AI tools to code faster" durationSec={5} accent={COLORS.buildWithAI} active />
                 <Role icon={<TechLeadIcon color={COLORS.buildWithAI} />} title="TECH LEAD" desc="Guides teams with AI reviews" durationSec={5} accent={COLORS.buildWithAI} active />
                 <Role icon={<ArchitectIcon color={COLORS.buildWithAI} />} title="ARCHITECT" desc="Designs AI-first architectures" durationSec={5} accent={COLORS.buildWithAI} active />
-                <Role icon={<VibecoderIcon color={COLORS.buildWithAI} />} title="VIBECODER" desc="Turns vibes into code: scaffold, refactor & align UI to intent." durationSec={5} accent={COLORS.buildWithAI} active />
-                <Role icon={<AIContentGenIcon color={COLORS.buildWithAI} />} title="AI CONTENT GENERATION" desc="Creates on-brand copy, docs, and media with human-in-the-loop." durationSec={5} accent={COLORS.buildWithAI} active />
+                <Role icon={<VibecoderIcon color={COLORS.buildWithAI} />} title="VIBECODER" desc="Writes code that just feels right" durationSec={5} accent={COLORS.buildWithAI} active />
+                <Role icon={<AIContentGenIcon color={COLORS.buildWithAI} />} title="AI CONTENT GENERATION" desc="Guiding AI's output with creative prompts" durationSec={5} accent={COLORS.buildWithAI} active />
               </>
             )}
           </Section>

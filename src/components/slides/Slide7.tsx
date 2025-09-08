@@ -27,20 +27,20 @@ import {
 
 export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThicker() {
   const left: BoxSpec[] = [
-    { side: 'left', icon: '💡', text: 'Framing', delay: 0.2, color: '#e74c3c' },
-    { side: 'left', icon: '📊', text: 'Assessment', delay: 0.35, color: '#e74c3c' },
-    { side: 'left', icon: '🗂️', text: 'Curation', delay: 0.5, color: '#e74c3c' },
-    { side: 'left', icon: '🔎', text: 'Synthesis & Sensemaking', delay: 0.65, color: '#e74c3c' },
-    { side: 'left', icon: '🌐', text: 'Networks', delay: 0.8, color: '#e74c3c' },
-    { side: 'left', icon: '🤝', text: 'Engagement', delay: 0.95, color: '#e74c3c' },
+    { side: 'left', icon: '💡', text: 'Framing', delay: 0.2, color: '#ff4d4d' },
+    { side: 'left', icon: '📊', text: 'Assessment', delay: 0.35, color: '#ff4d4d' },
+    { side: 'left', icon: '🗂️', text: 'Curation', delay: 0.5, color: '#ff4d4d' },
+    { side: 'left', icon: '🔎', text: 'Synthesis & Sensemaking', delay: 0.65, color: '#ff4d4d' },
+    { side: 'left', icon: '🌐', text: 'Networks', delay: 0.8, color: '#ff4d4d' },
+    { side: 'left', icon: '🤝', text: 'Engagement', delay: 0.95, color: '#ff4d4d' },
   ];
   const right: BoxSpec[] = [
-    { side: 'right', icon: '🛠️', text: 'Generation', delay: 0.2, color: '#2c3e94' },
-    { side: 'right', icon: '✨', text: 'Inspiration', delay: 0.35, color: '#2c3e94' },
-    { side: 'right', icon: '🧩', text: 'Diagnostics', delay: 0.5, color: '#2c3e94' },
-    { side: 'right', icon: '📈', text: 'Analysis', delay: 0.65, color: '#2c3e94' },
-    { side: 'right', icon: '🔄', text: 'Adaptation', delay: 0.8, color: '#2c3e94' },
-    { side: 'right', icon: 'ℹ️', text: 'Information', delay: 0.95, color: '#2c3e94' },
+    { side: 'right', icon: '🛠️', text: 'Generation', delay: 0.2, color: '#4e83c3' },
+    { side: 'right', icon: '✨', text: 'Inspiration', delay: 0.35, color: '#4e83c3' },
+    { side: 'right', icon: '🧩', text: 'Diagnostics', delay: 0.5, color: '#4e83c3' },
+    { side: 'right', icon: '📈', text: 'Analysis', delay: 0.65, color: '#4e83c3' },
+    { side: 'right', icon: '🔄', text: 'Adaptation', delay: 0.8, color: '#4e83c3' },
+    { side: 'right', icon: 'ℹ️', text: 'Information', delay: 0.95, color: '#4e83c3' },
   ];
 
   const stories = useMemo(

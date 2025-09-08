@@ -71,7 +71,6 @@ export const BackpropDot = ({
   />
 );
 
-/* === NEW: Activation heat pulse === */
 export const HeatPulse = ({
   x, y, base = "#60a5fa", highlight = "#1d4ed8", delay = 0,
 }: { x: number; y: number; base?: string; highlight?: string; delay?: number }) => (
@@ -90,7 +89,6 @@ export const HeatPulse = ({
   />
 );
 
-/* === NEW: Backprop glow overlay === */
 export const GlowConnection = ({
   x1, y1, x2, y2, delay = 0,
 }: { x1: number; y1: number; x2: number; y2: number; delay?: number }) => (
@@ -112,11 +110,10 @@ export const GlowConnection = ({
   </>
 );
 
-/* === NEW: Tiny loss curve preview (text now black + Nunito Sans) === */
 export const LossMini = ({ x = 360, y = 320 }: { x?: number; y?: number }) => (
   <g transform={`translate(${x},${y})`}>
     <rect x={0} y={0} width={140} height={64} rx={8} ry={8} fill="#f8fafc" stroke="#e2e8f0" />
-    <text x={10} y={16} fontSize={10} fill="#000000" style={{ fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+    <text x={10} y={16} fontSize={16} fill="#000000" style={{ fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
       Loss
     </text>
     <motion.path
@@ -149,7 +146,7 @@ export const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.45 } },
 };
 
-/* =================== Styles (Nunito Sans + white bg + black text) =================== */
+/* =================== Styles =================== */
 export const styles = {
   root: {
     width: "100%",
@@ -158,15 +155,15 @@ export const styles = {
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "column" as const,
-    padding: "40px",
+    padding: "60px",
     boxSizing: "border-box" as const,
     textAlign: "center" as const,
-    background: "white", // changed to white
+    background: "white",
     borderRadius: "12px",
     overflow: "hidden" as const,
     position: "relative" as const,
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    color: "#000000", // default text color black
+    color: "#000000",
   },
 
   backdrop: {
@@ -177,19 +174,16 @@ export const styles = {
   },
 
   headerH2: {
-    fontSize: "2.5rem",
-    color: "#000000", // black
-    marginBottom: 8,
-    position: "relative" as const,
+    fontSize: "3.5rem", // increased
+    color: "#4E83C3", // changed to requested blue
+    marginBottom: 780,
+    position: "absolute" as const,
     zIndex: 1,
     textAlign: "center" as const,
   },
 
   headerBar: {
-    height: 5,
-    background: "#4a90e2",
-    borderRadius: 4,
-    margin: "0 auto 12px",
+    display: "none", // removed underline
   },
 
   row: {
@@ -199,13 +193,15 @@ export const styles = {
     position: "relative" as const,
     zIndex: 1,
     height: "calc(100% - 92px)",
-    minHeight: 0,
+    minHeight: 10,
+    marginTop: 100,
   },
 
   leftPanel: {
     background: "white",
     borderRadius: 12,
     padding: 16,
+    border: "2px solid #4E83C3", // blue border
     boxShadow: "0 6px 16px rgba(0,0,0,0.08)",
     display: "flex",
     flexDirection: "column" as const,
@@ -214,9 +210,9 @@ export const styles = {
     overflow: "hidden" as const,
   },
 
-  leftTitle: { color: "#000000", marginBottom: 6 },
-  leftPara: { fontSize: "0.98rem", color: "#000000", marginBottom: 10 },
-  leftList: { color: "#000000", paddingLeft: 16, lineHeight: 1.45, fontSize: "0.92rem", margin: 0 },
+  leftTitle: { color: "#000000", fontSize: "1.8rem", fontWeight: 500, marginBottom: 10 },
+  leftPara: { fontSize: "1.25rem", color: "#000000", marginBottom: 10 },
+  leftList: { color: "#000000", paddingLeft: 16, lineHeight: 1.45, fontSize: "1.25rem", margin: 0 },
 
   miniTrainWrap: { marginTop: 10, height: 110, flexShrink: 0 },
 
@@ -230,24 +226,27 @@ export const styles = {
 
   legendDotFwd: { width: 10, height: 10, borderRadius: 5, background: "#f39c12", display: "inline-block" },
   legendDotBwd: { width: 10, height: 10, borderRadius: 5, background: "#e74c3c", display: "inline-block" },
-  legendText: { fontSize: 12, color: "#000000" }, // black
+  legendText: { fontSize: 16, color: "#000000" },
 
   rightPanel: {
     background: "white",
     borderRadius: 12,
     padding: 12,
+    border: "2px solid #4E83C3", // blue border
     boxShadow: "0 6px 16px rgba(0,0,0,0.08)",
     overflow: "hidden" as const,
     minHeight: 0,
     position: "relative" as const,
+    fontSize: "1.25rem", // increased text font
+    color: "#000000",
   },
 
-  bottomCaption: { fontSize: 11, fill: "#000000" as any }, // black
+  bottomCaption: { fontSize: 11, fill: "#000000" as any },
 
   headerBarMotion: { width: 180, opacity: 1 },
 };
 
-/* =================== Small motion snippets (unchanged values) =================== */
+/* =================== Motion snippets =================== */
 export const headerIntro = {
   titleInitial: { y: -10, opacity: 0 },
   titleAnimate: { y: 0, opacity: 1 },

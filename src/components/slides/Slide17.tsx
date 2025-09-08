@@ -77,7 +77,7 @@ const Slide17: React.FC = () => {
           transition={{ duration: 0.5, delay: 0.1 }}
           style={{
             ...S17.cardBase,
-            boxShadow: "0 20px 40px rgba(37, 99, 235, 0.18)",
+            
             border: "2px solid #2563eb",
           }}
         >
@@ -119,7 +119,7 @@ const Slide17: React.FC = () => {
           transition={{ duration: 0.5, delay: 0.25 }}
           style={{
             ...S17.cardBase,
-            boxShadow: "0 20px 40px rgba(5, 150, 105, 0.18)",
+            
             border: "2px solid #059669",
           }}
         >

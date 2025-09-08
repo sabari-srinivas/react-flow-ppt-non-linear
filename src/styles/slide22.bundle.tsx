@@ -24,9 +24,9 @@ export const containerStyle: React.CSSProperties = {
 
 /** Heading / copy */
 export const h2Style: React.CSSProperties = {
-  fontSize: "2.4rem",
-  fontWeight: 800,
-  color: "#000000", // black text
+  fontSize: "2.8rem",
+  fontWeight: 700,
+  color: "#4e83c3", // black text
   marginBottom: 0,
   fontFamily:
     "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -34,12 +34,12 @@ export const h2Style: React.CSSProperties = {
 export const leadStyle: React.CSSProperties = {
   color: "#000000",
   marginTop: 6,
-  fontSize: 16,
+  fontSize: 28,
   fontFamily:
     "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
 export const footNoteStyle: React.CSSProperties = {
-  fontSize: 16,
+  fontSize: 26,
   maxWidth: 760,
   color: "#000000",
   lineHeight: 1.5,
@@ -64,8 +64,8 @@ export const stepArrowStyle: React.CSSProperties = {
 export const stepChipBase: React.CSSProperties = {
   padding: "8px 14px",
   borderRadius: 999,
-  fontWeight: 700,
-  fontSize: 14,
+  fontWeight: 500,
+  fontSize: 18,
   border: "1px solid rgba(0,0,0,0.06)",
   backdropFilter: "blur(4px)",
   fontFamily:
@@ -127,7 +127,7 @@ export const stepCardTitle: React.CSSProperties = {
 };
 export const stepCardLine: React.CSSProperties = {
   color: "#000000",
-  fontSize: 14,
+  fontSize: 18,
   lineHeight: 1.45,
 };
 
@@ -239,10 +239,11 @@ export const decisionBubble: React.CSSProperties = {
   borderRadius: 12,
   background: "rgba(255,255,255,0.95)",
   color: "#000000",
-  fontSize: 14,
+  fontSize: 16,
   boxShadow: "0 12px 24px rgba(0,0,0,0.12)",
   border: "1px solid rgba(0,0,0,0.06)",
   opacity: 0,
+  fontWeight:  100,
   zIndex: 4,
 };
 export const dishStyle: React.CSSProperties = {

@@ -18,9 +18,9 @@ export const styles: Record<'wrapper' | 'title', CSSProperties> = {
   },
   title: {
     fontSize: '4rem',
-    fontWeight: 900,
+    fontWeight: 700,
     textAlign: 'center',
-    color: '#000000', // black instead of gradient
+    color: '#4e83c3', // black instead of gradient
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   },
 };

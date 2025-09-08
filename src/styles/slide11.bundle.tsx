@@ -27,7 +27,7 @@ export const styles = {
   titleStyle: {
     fontSize: '2.8rem',
     fontWeight: 800,
-    color: '#000000', // black
+    color: '#4e83c3', // black
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   } as React.CSSProperties,
   rootBg: {
@@ -103,7 +103,7 @@ export const styles = {
     borderRadius: '8px',
     background: '#ffffff',
     boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-    border: '1px solid rgba(0,0,0,0.05)',
+    border: '2px solid #4e83c3',
     textAlign: 'left' as const,
     backdropFilter: 'blur(10px)',
     display: 'flex',
@@ -115,7 +115,7 @@ export const styles = {
   listCard: {
     padding: '15px',
     borderRadius: '8px',
-    background: '#ffffff',
+    background: '#C9E8FF',
     boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
     border: '1px solid rgba(0,0,0,0.05)',
     textAlign: 'left' as const,

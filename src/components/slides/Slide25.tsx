@@ -24,18 +24,7 @@ const AgenticPatternsSlide: React.FC = () => {
         whileInView={{ opacity: 0.5, scale: 1 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.8 }}
-        style={{
-          position: "absolute",
-          width: 320,
-          height: 320,
-          borderRadius: "50%",
-          filter: "blur(30px)",
-          background:
-            "radial-gradient(circle, rgba(59,130,246,0.28), transparent 60%)",
-          top: 40,
-          left: -80,
-          pointerEvents: "none",
-        }}
+        
       />
       <motion.div
         aria-hidden
@@ -43,18 +32,7 @@ const AgenticPatternsSlide: React.FC = () => {
         whileInView={{ opacity: 0.45, scale: 1 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.8, delay: 0.1 }}
-        style={{
-          position: "absolute",
-          width: 360,
-          height: 360,
-          borderRadius: "50%",
-          filter: "blur(34px)",
-          background:
-            "radial-gradient(circle, rgba(34,197,94,0.22), transparent 60%)",
-          bottom: -60,
-          right: -60,
-          pointerEvents: "none",
-        }}
+       
       />
 
       {/* Title */}
@@ -122,8 +100,8 @@ const AgenticPatternsSlide: React.FC = () => {
             {/* Heading */}
             <div
               style={{
-                fontWeight: 800,
-                fontSize: "clamp(1.0rem, 1.6vw, 1.05rem)",
+                fontWeight: 700,
+                fontSize: "clamp(1.3rem, 1.6vw, 1.05rem)",
                 color: "#0f172a",
                 letterSpacing: 0.2,
               }}
@@ -135,7 +113,7 @@ const AgenticPatternsSlide: React.FC = () => {
             <div
               style={{
                 color: "#334155",
-                fontSize: "clamp(0.9rem, 1.4vw, 0.95rem)",
+                fontSize: "clamp(1.1rem, 1.4vw, 0.95rem)",
                 lineHeight: 1.45,
               }}
             >

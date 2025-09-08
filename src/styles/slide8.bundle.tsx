@@ -67,7 +67,7 @@ export const styles = {
   },
   titleH2: {
     fontSize: "2.8rem",
-    color: "#000000", // black
+    color: "#4e83c3", // black
     marginBottom: 10,
     textAlign: "center" as const,
   },
@@ -100,7 +100,7 @@ export const styles = {
     justifyContent: "flex-start" as const,
     padding: 24,
     textAlign: "center" as const,
-    border: "1px solid rgba(0,0,0,0.06)",
+    border: "2px solid #4e83c3",
     minHeight: 260,
     margin: "0 auto",
     transition: "all 0.25s ease",
@@ -152,9 +152,9 @@ export const styles = {
   },
   modalH3: {
     margin: 0,
-    fontSize: "1.35rem",
+    fontSize: "1.55rem",
     color: "#000000", // black
-    fontWeight: 800,
+    fontWeight: 700,
   },
   modalP: { marginTop: 6, color: "#000000" }, // black
   exampleBox: {
@@ -170,8 +170,8 @@ export const styles = {
   stepsStrong: { color: "#000000" }, // black
   stepsList: { marginTop: 8, color: "#000000", lineHeight: 1.55 }, // black
   stepsLi: { marginBottom: 6 },
-  cardTitle: { margin: 0, color: "#000000", fontSize: "1.1rem", fontWeight: 700, letterSpacing: 0.2 }, // black
-  cardDesc: { fontSize: "0.92rem", marginTop: 8, color: "#000000", lineHeight: 1.45 }, // black
+  cardTitle: { margin: 0, color: "#000000", fontSize: "1.4rem", fontWeight: 700, letterSpacing: 0.2 }, // black
+  cardDesc: { fontSize: "1rem", marginTop: 8, color: "#000000", lineHeight: 1.45 }, // black
 };
 
 /* ========== UI components (same visuals/animations) ========== */

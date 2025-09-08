@@ -1,4 +1,3 @@
-// Base container styles
 export const slideContainer = {
   width: '100%',
   height: '100%',
@@ -28,7 +27,7 @@ export const fullBleedContainer = {
 // Typography styles
 export const titleStyle = {
   fontSize: '4.5rem',
-  color: '#000000', // black
+  color: '#4E83C3', // black
   margin: '0 0 20px 0',
   fontWeight: 700,
   lineHeight: 1.2,
@@ -135,6 +134,7 @@ export const cardStyle = {
   height: '100%',
   display: 'flex',
   flexDirection: 'column' as const,
+  border: '2px solid #4E83C3',
   '&:hover': {
     transform: 'translateY(-5px)',
     boxShadow: '0 8px 25px rgba(0,0,0,0.15)',

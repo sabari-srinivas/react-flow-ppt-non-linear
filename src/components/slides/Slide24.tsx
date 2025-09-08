@@ -113,7 +113,7 @@ const Slide24: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: TRANS.title }}
       >
-        Multi-Agent Workflow — Restaurant Order
+        Multi-Agent Workflow - Restaurant Order
       </motion.h2>
 
       <motion.p

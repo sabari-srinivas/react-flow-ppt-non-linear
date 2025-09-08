@@ -19,7 +19,7 @@ export const S16 = {
   title: {
     fontSize: "3.4rem",
     marginBottom: 12,
-    color: "#000000", // black (replaces gradient text)
+    color: "#4e83c3", // black (replaces gradient text)
     textAlign: "center",
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   } as CSSProperties,
@@ -46,7 +46,8 @@ export const S16 = {
   } as CSSProperties,
 
   narrTitle: {
-    fontWeight: 900,
+    fontWeight: 700,
+    fontSize: "1.2rem",
     color: "#000000",
   } as CSSProperties,
 
@@ -63,7 +64,7 @@ export const S16 = {
   } as CSSProperties,
 
   narrRightStatus: {
-    fontSize: 12,
+    fontSize: 20,
     color: "#000000",
   } as CSSProperties,
 
@@ -82,7 +83,7 @@ export const S16 = {
     borderRadius: 16,
     padding: 20,
     boxShadow: "0 12px 26px rgba(0,0,0,0.10)",
-    border: "1px solid rgba(0,0,0,0.06)",
+    border: "2px solid #4e83c3",
     display: "flex",
     flexDirection: "column",
     gap: 12,
@@ -92,8 +93,9 @@ export const S16 = {
   } as CSSProperties,
 
   panelHeading: {
-    fontWeight: 800,
+    fontWeight: 700,
     color: "#000000",
+    fontSize: "1.2rem",
   } as CSSProperties,
 
   promptBubble: {

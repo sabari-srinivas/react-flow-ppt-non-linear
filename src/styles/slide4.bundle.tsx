@@ -37,7 +37,7 @@ export const styles = {
     fontSize: "3.8rem",
     fontWeight: 900,
     margin: 0,
-    color: "#000000", // black
+    color: "#4E83C3", // black
     textAlign: "center" as const,
     letterSpacing: "-1px",
     zIndex: 20,
@@ -144,9 +144,9 @@ export const styles = {
     margin: "20px 0",
   },
 
-  metricTitleLeft: { fontSize: 22, fontWeight: 850 },
-  metricTitleRight: { fontSize: 20, fontWeight: 850 },
-  metricSubRight: { fontSize: 13, color: "#000000", fontWeight: 600 }, // black
+  metricTitleLeft: { fontSize: 26, fontWeight: 700 },
+  metricTitleRight: { fontSize: 26, fontWeight: 700 },
+  metricSubRight: { fontSize: 18, color: "#000000", fontWeight: 400 }, // black
 };
 
 /* ===================== Animations (exact values) ===================== */
@@ -159,7 +159,7 @@ export const listContainerVariants = {
 };
 
 export const leftItemVariants = {
-  hidden: { opacity: 0, x: -40, rotate: -1 },
+  hidden: { opacity: 0, x: 0, rotate: 1 },
   show: {
     opacity: 1,
     x: 0,
@@ -169,7 +169,7 @@ export const leftItemVariants = {
 };
 
 export const rightItemVariants = {
-  hidden: { opacity: 0, x: 40, rotate: 1 },
+  hidden: { opacity: 0, x:0, rotate: 1 },
   show: {
     opacity: 1,
     x: 0,

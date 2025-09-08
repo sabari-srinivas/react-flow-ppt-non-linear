@@ -21,14 +21,14 @@ export const titleStyle: React.CSSProperties = {
   fontSize: "5rem",
   fontWeight: "bold",
   marginBottom: "20px",
-  color: "#000000", // black text
+  color: "#4e83c3", // black text
   fontFamily:
     "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
 
 export const subtitleStyle: React.CSSProperties = {
   fontSize: "2rem",
-  fontWeight: 500,
+  fontWeight: 400,
   marginTop: "10px",
   color: "#000000", // black text
   fontFamily:

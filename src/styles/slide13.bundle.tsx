@@ -45,7 +45,7 @@ export const styles: Record<string, CSSProperties> = {
     ...titleStyle,
     fontSize: '3rem',
     marginBottom: 10,
-    color: '#000000', // black instead of gradient
+    color: '#4e83c3', // black instead of gradient
     textAlign: 'center',
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   },
@@ -61,7 +61,7 @@ export const styles: Record<string, CSSProperties> = {
     padding: '8px 12px',
     boxShadow: '0 10px 22px rgba(0,0,0,0.08)',
   },
-  controlsTitle: { fontWeight: 800, color: '#000000' },
+  controlsTitle: { fontSize: '1.1rem', fontWeight: 600, color: '#000000' },
   statusDot: { width: 6, height: 6, borderRadius: 999, marginLeft: 8 },
   btn: { border: 'none', background: '#f1f5f9', borderRadius: 8, padding: '6px 10px', cursor: 'pointer' },
   btnAlt: { border: 'none', background: '#eef2ff', borderRadius: 8, padding: '6px 10px', cursor: 'pointer' },
@@ -71,7 +71,7 @@ export const styles: Record<string, CSSProperties> = {
     color: '#000000', // black text
     padding: '14px 18px',
     borderRadius: 14,
-    fontSize: '1.1rem',
+    fontSize: '1.6rem',
     marginBottom: 18,
     boxShadow: '0 12px 24px rgba(0,0,0,0.08)',
     display: 'inline-flex',
@@ -108,6 +108,7 @@ export const styles: Record<string, CSSProperties> = {
     position: 'absolute',
     bottom: 12,
     left: 12,
+    fontSize: '1.2rem',
     color: '#000000',
     fontWeight: 600,
     background: 'rgba(255,255,255,0.75)',
@@ -151,7 +152,7 @@ export const styles: Record<string, CSSProperties> = {
   cardTitle: { fontWeight: 900, color: '#000000', marginBottom: 8 },
   cardBody: { color: '#000000', lineHeight: 1.55 },
 
-  agendaList: { paddingLeft: 18, margin: 0 },
+  agendaList: { fontSize: '1.2rem', paddingLeft: 18, margin: 0 },
 
   posterCanvas: {
     borderRadius: 12,
@@ -187,6 +188,7 @@ export const styles: Record<string, CSSProperties> = {
     padding: 10,
     borderRadius: 10,
     color: '#000000',
+    fontSize: '1.1rem',
   },
   emailDim: { opacity: 0.8 },
 
@@ -199,8 +201,8 @@ export const styles: Record<string, CSSProperties> = {
     boxShadow: '0 12px 28px rgba(0,0,0,0.12)',
     maxWidth: 920,
   },
-  ctaTitle: { fontWeight: 800, color: '#000000', marginBottom: 4 },
-  ctaText: { color: '#000000' },
+  ctaTitle: { fontSize: '1.2rem', fontWeight: 700, color: '#000000', marginBottom: 4 },
+  ctaText: {fontSize: '1rem', color: '#000000',fontWeight: 500},
 
-  footerHint: { marginTop: 12, fontSize: 12, color: '#000000' },
+  footerHint: { marginTop: 12, fontSize: 16, color: '#000000' },
 };

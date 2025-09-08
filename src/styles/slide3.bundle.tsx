@@ -36,12 +36,12 @@ export const segmentGeom: Record<Segment, { left: string; width: string }> = {
 export const STORY_ORDER: Segment[] = ["energy", "trade", "compute", "skill"];
 
 /* ---------------- Exact timing (unchanged) ---------------- */
-export const TOT_PER_SEGMENT = 5.0;       // 5 seconds per segment block (color + markers)
+export const TOT_PER_SEGMENT = 2.0;       // 5 seconds per segment block (color + markers)
 export const SEGMENT_FADE_DURATION = 0.8; // color fade
 export const MARKERS_START_OFFSET = 1.0;  // markers begin ~1s into the block
 export const MARKER_STAGGER = 0.18;       // spacing between markers
 
-/* ---------------- Animation configs (unchanged values) ---------------- */
+/* ---------------- Animation configs ---------------- */
 export const barGrow = {
   initial: { scaleX: 0 },
   animate: { scaleX: 1 },
@@ -55,11 +55,10 @@ export const overlayFade = {
 
 export const markerFade = {
   initial: { opacity: 0, scale: 0.8 },
-  // animate is computed in-slide based on visibility
   transition: { duration: 0.35, ease: "easeOut" as const },
 };
 
-/* ---------------- Style helpers (return exactly your inline styles) ---------------- */
+/* ---------------- Style helpers ---------------- */
 export const styles = {
   titleOverrides(): CSSProperties {
     return {
@@ -73,7 +72,7 @@ export const styles = {
       lineHeight: 1.15,
       zIndex: 2,
       pointerEvents: "none",
-      fontSize: "clamp(20px, 4vw, 36px)",
+      fontSize: "clamp(22px, 4.5vw, 42px)", // ⬆ title bigger
     };
   },
 
@@ -83,8 +82,8 @@ export const styles = {
       top: "calc(50% + 60px)",
       left: "50%",
       transform: "translate(-50%, -50%)",
-      width: "100%",
-      maxWidth: "1000px",
+      width: "110%", // ⬅️ Timeline made lengthier
+      maxWidth: "1200px",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -94,35 +93,35 @@ export const styles = {
   yearLeft(): CSSProperties {
     return {
       position: "absolute",
-      top: -30,
-      left: 0,
-      fontSize: 14,
+      top: -40,
+      left: -40,
+      fontSize: 22, // ⬆ bigger
       fontWeight: 900,
       color: "#000",
-      letterSpacing: 0.4,
+      letterSpacing: 0.8,
     };
   },
 
   yearRight(): CSSProperties {
     return {
       position: "absolute",
-      top: -30,
-      right: 0,
-      fontSize: 14,
+      top: -40,
+      right: -40,
+      fontSize: 22, // ⬆ bigger
       fontWeight: 900,
       color: "#000",
-      letterSpacing: 0.4,
+      letterSpacing: 0.8,
     };
   },
 
   mainBar(): CSSProperties {
     return {
-      height: 20,
-      borderRadius: 10,
+      height: 30, // ⬆ thicker bar
+      borderRadius: 15,
       overflow: "hidden",
       position: "relative",
       transformOrigin: "left",
-      boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+      boxShadow: "0 6px 18px rgba(0,0,0,0.55)",
       width: "100%",
       background: "linear-gradient(90deg, #3b3b3b, #444)",
     };
@@ -137,7 +136,7 @@ export const styles = {
       height: "100%",
       background: gradientBg[seg],
       boxShadow: isHovered
-        ? `0 0 18px ${segmentColor[seg]}aa inset`
+        ? `0 0 22px ${segmentColor[seg]}aa inset`
         : `0 0 0 ${segmentColor[seg]}00 inset`,
     };
   },
@@ -145,10 +144,10 @@ export const styles = {
   labelEnergy(opacity: number): CSSProperties {
     return {
       position: "absolute",
-      top: -40,
+      top: -55,
       left: "20%",
       transform: "translateX(-50%)",
-      fontSize: 14,
+      fontSize: 25, // ⬆ bigger
       fontWeight: 700,
       color: "#FFD700",
       whiteSpace: "nowrap",
@@ -160,10 +159,10 @@ export const styles = {
   labelTrade(opacity: number): CSSProperties {
     return {
       position: "absolute",
-      top: -40,
+      top: -55,
       left: "57.5%",
       transform: "translateX(-50%)",
-      fontSize: 14,
+      fontSize: 25, // ⬆ bigger
       fontWeight: 700,
       color: "#FF69B4",
       whiteSpace: "nowrap",
@@ -175,10 +174,10 @@ export const styles = {
   labelCompute(opacity: number): CSSProperties {
     return {
       position: "absolute",
-      top: 28,
+      top: 36,
       left: "82.5%",
       transform: "translateX(-50%)",
-      fontSize: 14,
+      fontSize: 25, // ⬆ bigger
       fontWeight: 800,
       color: "#42A5F5",
       whiteSpace: "nowrap",
@@ -191,10 +190,10 @@ export const styles = {
   labelSkill(opacity: number): CSSProperties {
     return {
       position: "absolute",
-      top: -40,
+      top: -55,
       left: "95%",
       transform: "translateX(-50%)",
-      fontSize: 14,
+      fontSize: 25, // ⬆ bigger
       fontWeight: 700,
       color: "#80CBC4",
       whiteSpace: "nowrap",
@@ -223,11 +222,11 @@ export const styles = {
       position: "absolute",
       left: "50%",
       transform: "translateX(-50%)",
-      top: m.align === "top" ? -60 : 20,
-      width: 2,
-      height: 60,
-      background: hoveredSegment === m.segment ? segmentColor[m.segment] : "#ccc",
-      borderRadius: 1,
+      top: m.align === "top" ? -80 : 30,
+      width: 3.5, // ⬆ thicker
+      height: 75,
+      background: hoveredSegment === m.segment ? segmentColor[m.segment] : "#bbb",
+      borderRadius: 2,
       transition: "background 200ms linear",
     };
   },
@@ -237,24 +236,24 @@ export const styles = {
       position: "absolute",
       left: "50%",
       transform: "translateX(-50%)",
-      top: m.align === "top" ? -110 : 80,
-      width: 60,
-      height: 60,
+      top: m.align === "top" ? -140 : 95,
+      width: 78,  // ⬆ bigger circle
+      height: 78,
       borderRadius: "50%",
-      border: `2px solid ${hoveredSegment === m.segment ? "#fff" : segmentColor[m.segment]}`,
+      border: `3px solid ${hoveredSegment === m.segment ? "#fff" : segmentColor[m.segment]}`,
       background: gradientBg[m.segment],
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       color: "#fff",
       fontWeight: 800,
-      fontSize: 14,
+      fontSize: 18, // ⬆ bigger text inside
       fontFamily: "'Poppins', sans-serif",
-      letterSpacing: "0.5px",
+      letterSpacing: "0.8px",
       boxShadow:
         hoveredSegment === m.segment
-          ? `0 0 18px ${segmentColor[m.segment]}aa`
-          : "0 2px 6px rgba(0,0,0,0.3)",
+          ? `0 0 22px ${segmentColor[m.segment]}aa`
+          : "0 3px 8px rgba(0,0,0,0.35)",
       transition: "all 0.3s ease",
     };
   },
@@ -264,11 +263,11 @@ export const styles = {
       position: "absolute",
       left: "50%",
       transform: "translateX(-50%)",
-      top: m.align === "top" ? -170 : 150,
-      width: 150,
+      top: m.align === "top" ? -220 : 190,
+      width: 200, // ⬆ wider
       color: "#2b2b2b",
-      fontSize: 12,
-      lineHeight: 1.4,
+      fontSize: 18, // ⬆ bigger
+      lineHeight: 1,
       fontWeight: 700,
       whiteSpace: "pre-line" as const,
       textAlign: "center" as const,

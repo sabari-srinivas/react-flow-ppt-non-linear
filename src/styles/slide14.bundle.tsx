@@ -46,7 +46,7 @@ export const styles: Record<string, CSSProperties> = {
     ...titleStyle,
     fontSize: '3rem',
     marginBottom: 14,
-    color: '#000000', // black text instead of gradient
+    color: '#4e83c3', // black text instead of gradient
     textAlign: 'center',
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   },
@@ -56,7 +56,7 @@ export const styles: Record<string, CSSProperties> = {
     color: '#000000',
     padding: '12px 16px',
     borderRadius: 12,
-    fontSize: '1.05rem',
+    fontSize: '1.5rem',
     marginBottom: 16,
     boxShadow: '0 8px 18px rgba(0,0,0,0.08)',
   },
@@ -75,7 +75,7 @@ export const styles: Record<string, CSSProperties> = {
     width: '100%',
   },
   narratorEmoji: { fontSize: 20 },
-  narratorTitle: { fontWeight: 800, color: '#000000' },
+  narratorTitle: { fontSize: '1.2rem', fontWeight: 700, color: '#000000' },
   narratorProgressOuter: {
     height: 6, flex: 1, background: '#e5e7eb', borderRadius: 999, overflow: 'hidden',
   },
@@ -91,6 +91,7 @@ export const styles: Record<string, CSSProperties> = {
     gap: 14,
     alignItems: 'stretch',
     margin: '8px 0 12px',
+    fontSize: '1.1rem',
   },
   pipelineCardBase: {
     background: '#ffffff',
@@ -117,7 +118,7 @@ export const styles: Record<string, CSSProperties> = {
     borderRadius: '50%',
     display: 'grid',
     placeItems: 'center',
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: 800,
     color: '#ffffff',
     background: '#000000',
@@ -125,9 +126,9 @@ export const styles: Record<string, CSSProperties> = {
   },
   emoji: { fontSize: 28, marginTop: 6 },
   cardTitle: { fontWeight: 800, color: '#000000', textAlign: 'center' },
-  cardRole:  { fontSize: 12, color: '#000000', textAlign: 'center' },
+  cardRole:  { fontSize: 18, color: '#000000', textAlign: 'center' },
 
-  infoText: { marginBottom: 10, fontSize: 13, color: '#000000' },
+  infoText: { marginBottom: 10, fontSize: 22, color: '#000000' },
 
   tokenLane: {
     position: 'relative',
@@ -155,8 +156,8 @@ export const styles: Record<string, CSSProperties> = {
     width: 36, height: 36, borderRadius: '50%', display: 'grid', placeItems: 'center', fontSize: 18,
   },
   storyBody: { flex: 1 },
-  storyBlurb: { fontWeight: 800, color: '#000000', marginBottom: 4 },
-  storyDetail: { color: '#000000', fontSize: 14, lineHeight: 1.55 },
+  storyBlurb: {fontSize: 24, fontWeight: 600, color: '#000000', marginBottom: 4 },
+  storyDetail: { color: '#000000', fontSize: 20, lineHeight: 1.55 },
 
   typedPoem: {
     marginTop: 10,

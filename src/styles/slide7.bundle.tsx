@@ -42,7 +42,7 @@ export const styles = {
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
     background: 'white', // was gradient
-    padding: '40px 60px',
+    padding: '20px 30px',
     position: 'relative' as const,
     overflow: 'hidden' as const,
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -50,9 +50,9 @@ export const styles = {
   },
 
   h2: {
-    fontSize: '2.2rem',
-    color: '#000000', // black
-    marginBottom: '2rem',
+    fontSize: '2.5rem',
+    color: '#4e83c3', 
+    marginBottom: '6rem',
     textAlign: 'center' as const,
     fontWeight: 700,
     zIndex: 2,
@@ -81,7 +81,7 @@ export const styles = {
     display: 'flex',
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-    fontSize: '1rem',
+    fontSize: '1.1rem',
     background: '#fff',
     position: 'relative' as const,
     overflow: 'hidden' as const,
@@ -101,23 +101,23 @@ export const styles = {
 
   brainSplitLeft: {
     flex: 1,
-    background: '#e74c3c',
-    color: '#000000', // black text
+    background: '#ff4d4d',
+    color: '#ffffff', // black text
     display: 'flex',
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-    fontWeight: 800,
+    fontWeight: 600,
     borderTopLeftRadius: '50%',
     borderBottomLeftRadius: '50%',
   },
   brainSplitRight: {
     flex: 1,
-    background: '#2c3e94',
-    color: '#000000', // black text
+    background: '#4e83c3',
+    color: '#ffffff', // black text
     display: 'flex',
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-    fontWeight: 800,
+    fontWeight: 600,
     borderTopRightRadius: '50%',
     borderBottomRightRadius: '50%',
   },
@@ -131,9 +131,9 @@ export const styles = {
     alignItems: 'center' as const,
     justifyContent: 'space-between' as const,
     padding: '10px 14px',
-    fontSize: '1rem',
+    fontSize: '1.1rem',
     fontWeight: 600,
-    color: '#000000', // black text on cards
+    color: '#ffffff', // black text on cards
     boxShadow: '0 8px 22px rgba(0,0,0,0.12)',
     overflow: 'hidden' as const,
     cursor: 'pointer',
@@ -206,7 +206,7 @@ export const styles = {
     color: '#000000', // black
   },
 
-  panelBody: { padding: '16px 18px', color: '#000000', lineHeight: 1.55, fontSize: 16 },
+  panelBody: { padding: '16px 18px', color: '#000000', lineHeight: 1.55, fontSize: 18 },
 };
 
 /* ========= Motion snippets (exact values moved) ========= */

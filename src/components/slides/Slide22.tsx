@@ -184,7 +184,7 @@ const Slide22 = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: EASE }}
       >
-        AI Agent Workflow — A Kitchen Story
+        AI Agent Workflow - A Kitchen Story
       </motion.h2>
 
       <motion.p
@@ -268,7 +268,7 @@ const Slide22 = () => {
         {/* Decision bubble */}
         <motion.div style={decisionBubble} animate={decisionControls}>
           <div style={{ fontWeight: 800, marginBottom: 4 }}>Recipe Plan 🧠</div>
-          <div style={{ fontSize: 12, color: "#475569" }}>Sauté veggies → simmer → season → plate</div>
+          <div style={{ fontSize: 16, fontWeight: 500, color: "#475569" }}>Sauté veggies → simmer → season → plate</div>
         </motion.div>
 
         {/* Dish */}

@@ -26,9 +26,9 @@ export const themeSlideContainer: React.CSSProperties = {
 
 export const titleStyle: React.CSSProperties = {
   textAlign: "center",
-  fontWeight: 800,
+  fontWeight: 700,
   letterSpacing: 0.2,
-  color: "#000000",                   // black title
+  color: "#4e83c3",                   // black title
   fontSize: "clamp(2.0rem, 4vw, 3.2rem)",
   marginBottom: 24,
 };
@@ -38,7 +38,7 @@ export const subtitleStyle: React.CSSProperties = {
   color: "#000000",                   // black subtitle
   marginTop: -4,
   marginBottom: 28,
-  fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
+  fontSize: "clamp(1.5rem, 1.4vw, 1.05rem)",
 };
 
 export const gridStyle: React.CSSProperties = {
@@ -54,7 +54,7 @@ export const cardStyle: React.CSSProperties = {
   borderRadius: 18,
   background: "rgba(255,255,255,0.92)",
   boxShadow: "0 12px 30px rgba(0,0,0,0.10)",
-  border: "1px solid rgba(0,0,0,0.06)",
+  border: "2px solid #4e83c3",
   padding: "18px 18px 16px",
   display: "grid",
   gridTemplateRows: "auto auto auto",
