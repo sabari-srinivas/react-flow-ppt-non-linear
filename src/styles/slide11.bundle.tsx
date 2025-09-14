@@ -26,7 +26,7 @@ export const styles = {
   },
   titleStyle: {
     fontSize: '2.8rem',
-    fontWeight: 800,
+    fontWeight: 700,
     color: '#4e83c3', // black
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   } as React.CSSProperties,
@@ -60,7 +60,7 @@ export const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     fontWeight: 'bold',
-    fontSize: '0.9em',
+    fontSize: '1.5em',
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   },
   barAssist: {
@@ -123,7 +123,7 @@ export const styles = {
     display: 'flex',
     flexDirection: 'column' as const,
     height: '100%',
-    fontSize: '0.8rem',
+    fontSize: '0.9rem',
     color: '#000000',
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   } as React.CSSProperties,

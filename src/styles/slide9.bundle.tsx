@@ -7,15 +7,15 @@ import React from 'react';
 
 /* ===== Motion (exact values from your file) ===== */
 export const cardVariants: Variants = {
-  hidden:  { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  hover:   { y: -6, boxShadow: '0 14px 30px rgba(0,0,0,0.15)', transition: { duration: 0.25 } },
+  hover: { y: -6, boxShadow: '0 14px 30px rgba(0,0,0,0.15)', transition: { duration: 0.25 } },
 };
 
 export const modalVariants: Variants = {
   hidden: { opacity: 0, y: 20, scale: 0.98 },
-  visible:{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.25 } },
-  exit:   { opacity: 0, y: 10, scale: 0.98, transition: { duration: 0.2 } },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.25 } },
+  exit: { opacity: 0, y: 10, scale: 0.98, transition: { duration: 0.2 } },
 };
 
 export const topGridIntro = {
@@ -33,15 +33,15 @@ export const bottomTextIntro = {
 export const overlayFade = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
-  exit:    { opacity: 0 },
+  exit: { opacity: 0 },
 };
 
 /* ===== Base styles (updated: Nunito Sans + white bg + black text) ===== */
 export const styles = {
   root: {
-    color: '#000000', // black
+    color: '#000000',
     padding: '40px 60px',
-    background: '#ffffff', // white
+    background: '#ffffff',
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   } as React.CSSProperties,
 
@@ -57,7 +57,7 @@ export const styles = {
   buttonBase: {
     borderRadius: 16,
     padding: 24,
-    textAlign: 'center' as const,
+    textAlign: 'left' as const, // LEFT align everything by default
     border: '1px solid rgba(0,0,0,0.06)',
     boxShadow: '0 8px 22px rgba(0,0,0,0.06)',
     backdropFilter: 'blur(6px)',
@@ -76,13 +76,27 @@ export const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: '0 auto 14px',
+    margin: '0 auto 14px', // ICON stays centered
     fontSize: 26,
-    color: '#000000', // black
+    color: '#000000',
   } as React.CSSProperties,
 
-  cardTitle: { fontSize: '1.3rem', fontWeight: 800, margin: '0 0 8px 0', color: '#000000' } as React.CSSProperties,
-  cardBlurb: { margin: 0, fontSize: '1.1rem', color: '#000000', lineHeight: 1.5 } as React.CSSProperties,
+  cardTitle: {
+    fontSize: '1.6rem',
+    fontWeight: 700,
+    margin: '0 0 8px 0',
+    color: '#000000',
+    textAlign: 'center' as const, // TITLE stays centered
+    width: '100%',
+  } as React.CSSProperties,
+
+  cardBlurb: {
+    margin: 0,
+    fontSize: '22px', // Updated to 22px
+    color: '#000000',
+    lineHeight: 1.5,
+    textAlign: 'left' as const, // LEFT-aligned as requested
+  } as React.CSSProperties,
 
   shimmerBase: {
     position: 'absolute' as const,
@@ -94,9 +108,9 @@ export const styles = {
   },
 
   bottomHeadline: {
-    fontSize: '2.2rem',
-    fontWeight: 800,
-    color: '#4e83c3', // black
+    fontSize: '2.3rem',
+    fontWeight: 700,
+    color: '#4e83c3',
     textAlign: 'center' as const,
     marginTop: 16,
     textShadow: 'none',
@@ -123,13 +137,30 @@ export const styles = {
     color: '#000000',
   } as React.CSSProperties,
 
-  sheetBody: { padding: 20, color: '#000000' } as React.CSSProperties,
-  sheetList: { margin: 0, paddingLeft: 18, color: '#000000', lineHeight: 1.6 } as React.CSSProperties,
-  sheetListItem: { marginBottom: 8 } as React.CSSProperties,
+  sheetBody: { 
+    padding: 20, 
+    color: '#000000' 
+  } as React.CSSProperties,
+
+  sheetList: { 
+    margin: 0, 
+    paddingLeft: 18, 
+    color: '#000000', 
+    lineHeight: 1.6,
+    textAlign: 'left' as const, // Ensure list is left-aligned
+  } as React.CSSProperties,
+
+  sheetListItem: { 
+    marginBottom: 8,
+    fontSize: '26px', // Updated to 22px
+    textAlign: 'left' as const, // Ensure list items are left-aligned
+  } as React.CSSProperties,
 };
 
 /* ===== Per-card style helpers (accents preserved) ===== */
-export const cardButtonStyle = (bgGrad: string): React.CSSProperties => ({ background: bgGrad });
+export const cardButtonStyle = (bgGrad: string): React.CSSProperties => ({ 
+  background: bgGrad 
+});
 
 export const iconCircleStyle = (accent: string): React.CSSProperties => ({
   ...styles.iconCircleBase,
@@ -175,14 +206,24 @@ export const headerIconStyle = (accent: string): React.CSSProperties => ({
   fontSize: 20,
 });
 
-export const headerTitle = { fontSize: '1.4rem', fontWeight: 700, color: '#000000' } as React.CSSProperties;
-export const headerSub   = { fontSize: '1.1rem', color: '#000000' } as React.CSSProperties;
+export const headerTitle = { 
+  fontSize: '1.7rem', 
+  fontWeight: 700, 
+  color: '#000000',
+  textAlign: 'left' as const,
+} as React.CSSProperties;
+
+export const headerSub = { 
+  fontSize: '20px', // Updated to 22px for consistency
+  color: '#000000',
+  textAlign: 'left' as const, // Ensure left alignment
+} as React.CSSProperties;
 
 export const closeBtn = {
   marginLeft: 'auto',
   border: 'none',
   background: 'transparent',
-  fontSize: 18,
+  fontSize: 20,
   cursor: 'pointer',
   color: '#000000',
 } as React.CSSProperties;
@@ -194,5 +235,6 @@ export const footerTipStyle = (accent: string): React.CSSProperties => ({
   background: `radial-gradient(120px 60px at 20% 0%, ${accent}10, transparent 60%)`,
   border: `1px dashed ${accent}44`,
   color: '#000000',
-  fontSize: 18,
+  fontSize: '20px', // Updated to 22px
+  textAlign: 'left' as const, // Ensure left alignment
 });

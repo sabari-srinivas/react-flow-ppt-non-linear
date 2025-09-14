@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import type React from "react";
 
-/* =================== Atomics (moved as-is, visuals unchanged) =================== */
+/* =================== Atomics =================== */
 export const Neuron = ({ x, y, delay = 0 }: { x: number; y: number; delay?: number }) => (
   <motion.circle
     cx={x}
@@ -113,7 +113,13 @@ export const GlowConnection = ({
 export const LossMini = ({ x = 360, y = 320 }: { x?: number; y?: number }) => (
   <g transform={`translate(${x},${y})`}>
     <rect x={0} y={0} width={140} height={64} rx={8} ry={8} fill="#f8fafc" stroke="#e2e8f0" />
-    <text x={10} y={16} fontSize={16} fill="#000000" style={{ fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+    <text
+      x={10}
+      y={16}
+      fontSize={16}
+      fill="#000000"
+      style={{ fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+    >
       Loss
     </text>
     <motion.path
@@ -157,7 +163,8 @@ export const styles = {
     flexDirection: "column" as const,
     padding: "60px",
     boxSizing: "border-box" as const,
-    textAlign: "center" as const,
+    // Default: LEFT-ALIGNED text
+    textAlign: "left" as const,
     background: "white",
     borderRadius: "12px",
     overflow: "hidden" as const,
@@ -166,24 +173,25 @@ export const styles = {
     color: "#000000",
   },
 
-  backdrop: {
+  /*backdrop: {
     position: "absolute" as const,
     inset: 0,
     background:
       "radial-gradient(1200px 400px at 20% -10%, #eaf6ff 0%, transparent 60%), radial-gradient(1000px 300px at 120% 110%, #fff9f0 0%, transparent 60%)",
-  },
+  },*/
 
+  // TITLE (centered)
   headerH2: {
-    fontSize: "3.5rem", // increased
-    color: "#4E83C3", // changed to requested blue
+    fontSize: "3.5rem",
+    color: "#4E83C3",
     marginBottom: 780,
     position: "absolute" as const,
     zIndex: 1,
-    textAlign: "center" as const,
+    textAlign: "center" as const, // keep centered
   },
 
   headerBar: {
-    display: "none", // removed underline
+    display: "none",
   },
 
   row: {
@@ -201,7 +209,7 @@ export const styles = {
     background: "white",
     borderRadius: 12,
     padding: 16,
-    border: "2px solid #4E83C3", // blue border
+    border: "2px solid #4E83C3",
     boxShadow: "0 6px 16px rgba(0,0,0,0.08)",
     display: "flex",
     flexDirection: "column" as const,
@@ -210,17 +218,27 @@ export const styles = {
     overflow: "hidden" as const,
   },
 
-  leftTitle: { color: "#000000", fontSize: "1.8rem", fontWeight: 500, marginBottom: 10 },
+  // TITLE (centered)
+  leftTitle: {
+    color: "#000000",
+    fontSize: "1.8rem",
+    fontWeight: 500,
+    marginBottom: 10,
+    textAlign: "center" as const, // keep centered
+  },
+
+  // Body text (left-aligned)
   leftPara: { fontSize: "1.25rem", color: "#000000", marginBottom: 10 },
   leftList: { color: "#000000", paddingLeft: 16, lineHeight: 1.45, fontSize: "1.25rem", margin: 0 },
 
   miniTrainWrap: { marginTop: 10, height: 110, flexShrink: 0 },
 
+  // Legend (left-aligned)
   legendWrap: {
     display: "flex",
     gap: 16,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start", // left
     paddingTop: 6,
   },
 
@@ -232,13 +250,14 @@ export const styles = {
     background: "white",
     borderRadius: 12,
     padding: 12,
-    border: "2px solid #4E83C3", // blue border
+    border: "2px solid #4E83C3",
     boxShadow: "0 6px 16px rgba(0,0,0,0.08)",
     overflow: "hidden" as const,
     minHeight: 0,
     position: "relative" as const,
-    fontSize: "1.25rem", // increased text font
+    fontSize: "1.25rem",
     color: "#000000",
+    // SVG content is positioned by coordinates; no textAlign needed here.
   },
 
   bottomCaption: { fontSize: 11, fill: "#000000" as any },

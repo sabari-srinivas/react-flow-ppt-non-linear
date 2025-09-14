@@ -51,11 +51,11 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
       },
       {
         user: 'User: Our Q2 NPS dipped by 6 points. What should we look at first?',
-        ai: 'AI (Inspiration): Start with ticket tags “latency” and “billing.” Run a quick cohort chart by plan to spot regression.',
+        ai: 'AI (Inspiration): Start with ticket tags "latency" and "billing." Run a quick cohort chart by plan to spot regression.',
       },
       {
         user: 'User: I have 200 blog ideas. Which ones should make the cut?',
-        ai: 'AI (Diagnostics): Cluster ideas by search intent; prioritize “how-to” topics with mid-funnel keywords and low KD.',
+        ai: 'AI (Diagnostics): Cluster ideas by search intent; prioritize "how-to" topics with mid-funnel keywords and low KD.',
       },
       {
         user: 'User: We saw sign-ups rise but activations stall. Why?',
@@ -74,8 +74,9 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
   );
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [showUser, setShowUser] = useState(false);
-  const [showAI,   setShowAI]   = useState(false);
+  const [clickedSide, setClickedSide] = useState<Side | null>(null);
+  const [showFirstPanel, setShowFirstPanel] = useState(false);
+  const [showSecondPanel, setShowSecondPanel] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const leftRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -84,7 +85,7 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
 
   const [anchors, setAnchors] = useState<AnchorState>(null);
 
-  // Compute anchors on mount/resize (unchanged math, moved helpers in bundle)
+  // Compute anchors on mount/resize
   useEffect(() => {
     const compute = () => {
       if (!containerRef.current || !brainRef.current) return;
@@ -150,29 +151,40 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
     };
   }, []);
 
-  const handleLeftClick = (idx: number) => {
+  // Updated click handler to track which side was clicked
+  const handleClick = (side: Side, idx: number) => {
     setActiveIndex(idx);
-    setShowUser(true);
-    setShowAI(false);
+    setClickedSide(side);
+    setShowFirstPanel(true);
+    setShowSecondPanel(false);
   };
 
+  // Auto-reveal second panel after first panel typing delay
   useEffect(() => {
-    if (!showUser || activeIndex === null) return;
-    const userText = stories[activeIndex].user;
-    const ms = Math.min(2500, Math.max(1200, userText.length * 18));
-    const id = setTimeout(() => setShowAI(true), ms);
+    if (!showFirstPanel || activeIndex === null || !clickedSide) return;
+    
+    const firstText = clickedSide === 'left' ? stories[activeIndex].user : stories[activeIndex].ai;
+    const ms = Math.min(2500, Math.max(1200, firstText.length * 18));
+    const id = setTimeout(() => setShowSecondPanel(true), ms);
     return () => clearTimeout(id);
-  }, [showUser, activeIndex, stories]);
+  }, [showFirstPanel, activeIndex, clickedSide, stories]);
 
-  // Card renderer (styles + motion imported)
+  // Determine which panels to show based on clicked side
+  const showUserPanel = activeIndex !== null && showFirstPanel && 
+    ((clickedSide === 'left') || (clickedSide === 'right' && showSecondPanel));
+  
+  const showAIPanel = activeIndex !== null && showFirstPanel && 
+    ((clickedSide === 'right') || (clickedSide === 'left' && showSecondPanel));
+
+  // Card renderer
   const renderCard = (
     b: BoxSpec,
     idx: number,
     side: Side,
     refCB: (el: HTMLButtonElement | null) => void
   ) => {
-    const isLeftActive = side === 'left' && activeIndex === idx && showUser;
-    const isRightActive = side === 'right' && activeIndex === idx && showAI;
+    const isLeftActive = side === 'left' && activeIndex === idx && showUserPanel;
+    const isRightActive = side === 'right' && activeIndex === idx && showAIPanel;
 
     return (
       <motion.button
@@ -182,8 +194,15 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
         animate={cardEnter(side, b.delay).animate}
         transition={cardEnter(side, b.delay).transition}
         whileHover={cardHover(side, b.color)}
-        onClick={() => side === 'left' && handleLeftClick(idx)}
-        style={{ ...styles.cardBase, background: b.color, outline: 'none', border: 'none', cursor: side === 'left' ? 'pointer' : 'default' }}
+        onClick={() => handleClick(side, idx)}
+        style={{
+          ...styles.cardBase,
+          background: b.color,
+          outline: 'none',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+        aria-pressed={activeIndex === idx}
       >
         <AnimatePresence>
           {(isLeftActive || isRightActive) && (
@@ -192,7 +211,10 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
               initial={activeGlow.initial}
               animate={activeGlow.animate}
               exit={activeGlow.exit}
-              style={{ ...activeGlow.style, boxShadow: `0 0 0 2px #ffffff88 inset, 0 0 24px ${b.color}` }}
+              style={{
+                ...activeGlow.style,
+                boxShadow: `0 0 0 2px #ffffff88 inset, 0 0 24px ${b.color}`,
+              }}
             />
           )}
         </AnimatePresence>
@@ -215,26 +237,52 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
   };
 
   return (
-    <motion.div className="slide-container" style={{ ...slideContainer, ...styles.slideRoot }}>
-      <motion.h2 initial={h2Intro.initial} animate={h2Intro.animate} transition={h2Intro.transition} style={styles.h2}>
+    <motion.div
+      className="slide-container"
+      style={{ ...slideContainer, ...styles.slideRoot }}
+    >
+      <motion.h2
+        initial={h2Intro.initial}
+        animate={h2Intro.animate}
+        transition={h2Intro.transition}
+        style={styles.h2}
+      >
         Human + AI Collaboration
       </motion.h2>
 
       {/* Measurement frame wraps overlay + content */}
       <div ref={containerRef} style={styles.measureFrame}>
         {/* Connector overlay (behind content) */}
-        <ConnectorOverlay anchors={anchors} activeIndex={activeIndex} showUser={showUser} showAI={showAI} />
+        <ConnectorOverlay
+          anchors={anchors}
+          activeIndex={activeIndex}
+          showUser={showUserPanel}
+          showAI={showAIPanel}
+        />
 
         {/* Content grid above overlay */}
         <div style={styles.grid}>
           {/* Left column */}
           <div style={styles.leftCol}>
-            {left.map((b, idx) => renderCard(b, idx, 'left', (el) => (leftRefs.current[idx] = el)))}
+            {left.map((b, idx) =>
+              renderCard(b, idx, 'left', (el) => (leftRefs.current[idx] = el))
+            )}
           </div>
 
           {/* Center brain */}
-          <motion.div ref={brainRef} initial={brainIntro.initial} animate={brainIntro.animate} transition={brainIntro.transition} style={styles.brainWrap}>
-            <motion.div aria-hidden style={styles.brainConic} animate={brainConicSpin.animate} transition={brainConicSpin.transition} />
+          <motion.div
+            ref={brainRef}
+            initial={brainIntro.initial}
+            animate={brainIntro.animate}
+            transition={brainIntro.transition}
+            style={styles.brainWrap}
+          >
+            <motion.div
+              aria-hidden
+              style={styles.brainConic}
+              animate={brainConicSpin.animate}
+              transition={brainConicSpin.transition}
+            />
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               <div style={styles.brainSplitLeft}>HUMAN</div>
               <div style={{ width: 1, background: 'rgba(0,0,0,0.08)' }} />
@@ -244,7 +292,9 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
 
           {/* Right column */}
           <div style={styles.rightCol}>
-            {right.map((b, idx) => renderCard(b, idx, 'right', (el) => (rightRefs.current[idx] = el)))}
+            {right.map((b, idx) =>
+              renderCard(b, idx, 'right', (el) => (rightRefs.current[idx] = el))
+            )}
           </div>
         </div>
       </div>
@@ -252,28 +302,48 @@ export default function Slide7_Boxes_ClickToStory_BothPanels_WithConnectorsThick
       {/* Dual story panels */}
       <div style={styles.panelsGrid}>
         <AnimatePresence>
-          {activeIndex !== null && showUser && (
-            <motion.div key={`user-${activeIndex}`} initial={panelPresence.initial} animate={panelPresence.animate} exit={panelPresence.exit} transition={panelPresence.transition} style={styles.panelCard}>
+          {activeIndex !== null && showUserPanel && (
+            <motion.div
+              key={`user-${activeIndex}`}
+              initial={panelPresence.initial}
+              animate={panelPresence.animate}
+              exit={panelPresence.exit}
+              transition={panelPresence.transition}
+              style={styles.panelCard}
+            >
               <div style={styles.panelHeaderUser}>
                 <span style={{ fontSize: 18 }}>{left[activeIndex].icon}</span>
                 <span>{left[activeIndex].text} — User request</span>
               </div>
               <div style={styles.panelBody}>
-                <TypingText text={stories[activeIndex].user} restartKey={`u-${activeIndex}`} />
+                <TypingText
+                  text={stories[activeIndex].user}
+                  restartKey={`u-${activeIndex}-${clickedSide}`}
+                />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
         <AnimatePresence>
-          {activeIndex !== null && showAI && (
-            <motion.div key={`ai-${activeIndex}`} initial={panelPresence.initial} animate={panelPresence.animate} exit={panelPresence.exit} transition={panelPresence.transition} style={styles.panelCard}>
+          {activeIndex !== null && showAIPanel && (
+            <motion.div
+              key={`ai-${activeIndex}`}
+              initial={panelPresence.initial}
+              animate={panelPresence.animate}
+              exit={panelPresence.exit}
+              transition={panelPresence.transition}
+              style={styles.panelCard}
+            >
               <div style={styles.panelHeaderAI}>
                 <span style={{ fontSize: 18 }}>{right[activeIndex].icon}</span>
                 <span>{right[activeIndex].text} — AI output</span>
               </div>
               <div style={styles.panelBody}>
-                <TypingText text={stories[activeIndex].ai} restartKey={`a-${activeIndex}`} />
+                <TypingText
+                  text={stories[activeIndex].ai}
+                  restartKey={`a-${activeIndex}-${clickedSide}`}
+                />
               </div>
             </motion.div>
           )}

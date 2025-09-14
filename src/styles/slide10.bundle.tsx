@@ -104,6 +104,7 @@ export const styles = {
     margin: '0 auto 40px',
     maxWidth: '1000px',
     textAlign: 'center' as const,
+    fontSize: '1.3rem',
   },
 
   stripBox: (isFirst: boolean) =>
@@ -115,7 +116,7 @@ export const styles = {
       borderRadius: 12,
       margin: isFirst ? '0 auto 15px' : '0 auto',
       textAlign: 'center',
-      fontSize: '1.1rem',
+      fontSize: '1.3rem',
       boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
       border: '1px solid rgba(0,0,0,0.05)',
       color: '#000000', // black

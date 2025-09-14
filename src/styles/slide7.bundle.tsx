@@ -2,7 +2,7 @@
 'use client';
 
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 /* ========= Types ========= */
 export type Side = 'left' | 'right';
@@ -23,7 +23,7 @@ export type AnchorState = {
   brainCy: number;
 } | null;
 
-/* ========= Constants (exact values) ========= */
+/* ========= Constants ========= */
 export const CARD_W = 260;
 export const CARD_H = 58;
 
@@ -34,24 +34,24 @@ export const CONNECTOR = {
   INACTIVE: 1.5,
 };
 
-/* ========= Styles (updated: Nunito Sans + white bg + black text) ========= */
+/* ========= Styles ========= */
 export const styles = {
   slideRoot: {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-    background: 'white', // was gradient
+    background: 'white',
     padding: '20px 30px',
     position: 'relative' as const,
     overflow: 'hidden' as const,
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    color: '#000000', // default text color
+    color: '#000000',
   },
 
   h2: {
     fontSize: '2.5rem',
-    color: '#4e83c3', 
+    color: '#4e83c3',
     marginBottom: '6rem',
     textAlign: 'center' as const,
     fontWeight: 700,
@@ -86,7 +86,7 @@ export const styles = {
     position: 'relative' as const,
     overflow: 'hidden' as const,
     boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
-    color: '#000000', // text inside brain default black
+    color: '#000000',
   },
 
   brainConic: {
@@ -102,7 +102,7 @@ export const styles = {
   brainSplitLeft: {
     flex: 1,
     background: '#ff4d4d',
-    color: '#ffffff', // black text
+    color: '#ffffff',
     display: 'flex',
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
@@ -113,7 +113,7 @@ export const styles = {
   brainSplitRight: {
     flex: 1,
     background: '#4e83c3',
-    color: '#ffffff', // black text
+    color: '#ffffff',
     display: 'flex',
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
@@ -133,7 +133,7 @@ export const styles = {
     padding: '10px 14px',
     fontSize: '1.1rem',
     fontWeight: 600,
-    color: '#ffffff', // black text on cards
+    color: '#ffffff',
     boxShadow: '0 8px 22px rgba(0,0,0,0.12)',
     overflow: 'hidden' as const,
     cursor: 'pointer',
@@ -193,7 +193,7 @@ export const styles = {
     background: 'linear-gradient(90deg, #ffe7e3, #fff)',
     borderBottom: '1px solid rgba(0,0,0,0.06)',
     fontWeight: 700,
-    color: '#000000', // black
+    color: '#000000',
   },
   panelHeaderAI: {
     display: 'flex',
@@ -203,13 +203,13 @@ export const styles = {
     background: 'linear-gradient(90deg, #e6ecff, #fff)',
     borderBottom: '1px solid rgba(0,0,0,0.06)',
     fontWeight: 700,
-    color: '#000000', // black
+    color: '#000000',
   },
 
   panelBody: { padding: '16px 18px', color: '#000000', lineHeight: 1.55, fontSize: 18 },
 };
 
-/* ========= Motion snippets (exact values moved) ========= */
+/* ========= Motion ========= */
 export const h2Intro = {
   initial: { opacity: 0, y: -20 },
   animate: { opacity: 1, y: 0 },
@@ -227,13 +227,13 @@ export const brainConicSpin = {
   transition: { duration: 16, repeat: Infinity, ease: 'linear' as const },
 };
 
-export const cardEnter = (side: Side, delay: number) => ({
+export const cardEnter = (side: 'left' | 'right', delay: number) => ({
   initial: { opacity: 0, x: side === 'left' ? -40 : 40 },
   animate: { opacity: 1, x: 0 },
   transition: { duration: 0.6, delay },
 });
 
-export const cardHover = (side: Side, color: string) => ({
+export const cardHover = (side: 'left' | 'right', color: string) => ({
   scale: 1.04,
   rotate: side === 'left' ? -1.5 : 1.5,
   boxShadow: `0 12px 30px ${color}66`,
@@ -296,7 +296,7 @@ export const cubicPath = (x1: number, y1: number, x2: number, y2: number) => {
   return `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
 };
 
-/* ========= Connector overlay component (animation+styles moved here) ========= */
+/* ========= Connector overlay ========= */
 export const ConnectorOverlay: React.FC<{
   anchors: AnchorState;
   activeIndex: number | null;
@@ -326,7 +326,6 @@ export const ConnectorOverlay: React.FC<{
             fill="none"
             stroke={stroke}
             strokeWidth={isActive ? CONNECTOR.ACTIVE : CONNECTOR.INACTIVE}
-            strokeDasharray="none"
             strokeOpacity={0.98}
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -350,7 +349,6 @@ export const ConnectorOverlay: React.FC<{
             fill="none"
             stroke={stroke}
             strokeWidth={isActive ? CONNECTOR.ACTIVE : CONNECTOR.INACTIVE}
-            strokeDasharray="none"
             strokeOpacity={0.98}
             strokeLinejoin="round"
             strokeLinecap="round"

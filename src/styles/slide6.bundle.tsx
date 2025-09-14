@@ -30,16 +30,16 @@ export const DataScientistIcon: React.FC<IconProps> = ({ color = COLORS.buildAI 
 );
 
 export const AIEngineerIcon: React.FC<IconProps> = ({ color = COLORS.buildAI }) => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill={color} stroke={color} strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
-        <text x="5" y="11" fontFamily="monospace" fontSize="7">1010</text>
-        <text x="5" y="19" fontFamily="monospace" fontSize="7">1010</text>
-    </svg>
+  <svg width="48" height="48" viewBox="0 0 24 24" fill={color} stroke={color} strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
+    <text x="5" y="11" fontFamily="monospace" fontSize="7">1010</text>
+    <text x="5" y="19" fontFamily="monospace" fontSize="7">1010</text>
+  </svg>
 );
 
 export const DeveloperIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI }) => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.56a1 1 0 0 1-.8 1.44H3.52a1 1 0 0 1-.8-1.44L4 16" />
-    </svg>
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.56a1 1 0 0 1-.8 1.44H3.52a1 1 0 0 1-.8-1.44L4 16" />
+  </svg>
 );
 
 // New Icon: Tie
@@ -52,11 +52,11 @@ export const TechLeadIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI }
 );
 
 export const ArchitectIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI }) => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M2 12.38 12 17l10-4.62" />
-        <path d="M2 8.38 12 13l10-4.62" />
-        <path d="M12 2 2 7l10 5 10-5-10-5z" />
-    </svg>
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 12.38 12 17l10-4.62" />
+    <path d="M2 8.38 12 13l10-4.62" />
+    <path d="M12 2 2 7l10 5 10-5-10-5z" />
+  </svg>
 );
 
 // New Icon: Brain
@@ -82,17 +82,16 @@ export const VibecoderIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI 
 );
 
 export const AIContentGenIcon: React.FC<IconProps> = ({ color = COLORS.buildWithAI }) => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-        <line x1="16" y1="13" x2="8" y2="13" />
-        <line x1="16" y1="17" x2="8" y2="17" />
-        <polyline points="10 9 9 9 8 9" />
-    </svg>
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+    <polyline points="10 9 9 9 8 9" />
+  </svg>
 );
 
-
-/* ================== Styles (unchanged) ================== */
+/* ================== Styles ================== */
 export const styles = {
   containerExtra: {
     display: "flex",
@@ -105,11 +104,11 @@ export const styles = {
   },
 
   headerH2: {
-    fontSize: "2.8rem", 
-    fontWeight: 700, 
+    fontSize: "2.7rem",
+    fontWeight: 700,
     marginBottom: "1.5rem",
     textAlign: "left" as const,
-    color: "#4E83C3", 
+    color: "#4E83C3",
     position: "relative" as const,
     display: "inline-block",
     width: "auto",
@@ -117,7 +116,7 @@ export const styles = {
   },
 
   headerUnderline: {
-    display: "none", 
+    display: "none",
   },
 
   mainGrid: {
@@ -146,7 +145,7 @@ export const styles = {
   },
 };
 
-/* ================== Header motion (unchanged) ================== */
+/* ================== Header motion ================== */
 export const headerMotion = {
   titleInitial: { opacity: 0, y: -20 },
   titleAnimate: { opacity: 1, y: 0 },
@@ -165,7 +164,7 @@ export const shimmerKeyframes = `
 }
 `;
 
-/* ================== Section + Role (unchanged) ================== */
+/* ================== Section + Role ================== */
 type Theme = "blue" | "orange" | "green";
 
 export const themeToColors = (theme: Theme) => {
@@ -236,8 +235,8 @@ export const Role: React.FC<RoleProps> = ({
     <div style={{ marginBottom: 10, height: 48, display: "flex", alignItems: "center" }}>{icon}</div>
     <h3
       style={{
-        fontSize: "1.1rem", 
-        fontWeight: 800,
+        fontSize: "1.3rem",
+        fontWeight: 700,
         marginBottom: 6,
         color: "#000000",
         textTransform: "uppercase",
@@ -247,7 +246,7 @@ export const Role: React.FC<RoleProps> = ({
     >
       {title}
     </h3>
-    <p style={{ fontSize: "1rem", color: "#000000", lineHeight: 1.35, margin: 0 }}>{desc}</p>
+    <p style={{ fontSize: "1.1rem", color: "#000000", lineHeight: 1.35, margin: 0 }}>{desc}</p>
   </motion.div>
 );
 
@@ -294,9 +293,9 @@ export const Section: React.FC<SectionProps> = ({
         <h3
           style={{
             margin: 0,
-            fontSize: "1.1rem", 
+            fontSize: "1.5rem",
             color: "#000000",
-            fontWeight: 800,
+            fontWeight: 700,
             letterSpacing: "0.3px",
             textTransform: "uppercase" as const,
             textShadow: "0 1px 1px rgba(255,255,255,0.8)",
@@ -336,6 +335,7 @@ export const Section: React.FC<SectionProps> = ({
         {children}
       </div>
 
+      {/* FOOTER CAPTION — centered */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={active ? { opacity: 1 } : { opacity: 0 }}
@@ -345,11 +345,11 @@ export const Section: React.FC<SectionProps> = ({
           borderTop: `1px dashed ${C.captionBorder}`,
           background: C.captionBg,
           color: "#000000",
-          fontSize: "1rem",
-          fontWeight: 500,
-          textAlign: "right" as const,
+          fontSize: "1.3rem",
+          fontWeight: 700,
+          textAlign: "center" as const,      // << centered
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: "center",           // << centered
           alignItems: "center",
         }}
       >

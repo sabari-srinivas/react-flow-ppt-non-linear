@@ -42,7 +42,7 @@ export const sectionTitleStyle = {
 };
 
 export const subtitleStyle = {
-  fontSize: '2rem',
+  fontSize: '2.1rem',
   color: '#000000', // black
   margin: '0 0 40px 0',
   fontWeight: 400,

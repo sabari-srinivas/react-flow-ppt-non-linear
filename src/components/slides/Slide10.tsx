@@ -14,23 +14,23 @@ import {
 
 export default function Slide10() {
   const topCards = [
-    { title: 'Virtual Workers', desc: 'Automating human-intensive tasks entirely using AI agents.', bg: ['#e57373', '#ef9a9a'] },
-    { title: 'Personalized Experiences', desc: 'Evolving personalization to AI-powered, hyper-personalized, segment-of-one experiences.', bg: ['#9fa8da', '#c5cae9'] },
-    { title: 'Productivity', desc: 'Enhancing efficiency in cognitive and knowledge-intensive tasks.', bg: ['#90caf9', '#bbdefb'] },
-    { title: 'Creativity & Content', desc: 'Accelerating creativity through AI-driven audio, visual, & video content generation.', bg: ['#aed581', '#c5e1a5'] },
-    { title: 'Insight Discovery', desc: 'Unlocking possibilities by AI-accelerated Data Science on structured & unstructured data together.', bg: ['#ffb74d', '#ffd180'] },
+    { title: 'Virtual Workers', desc: 'Automating human-intensive tasks entirely using AI agents.', bg: ['#c8ddf4', '#e1eff9'] },
+    { title: 'Personalized Experiences', desc: 'Evolving personalization to AI-powered, hyper-personalized, segment-of-one experiences.', bg: ['#d2e3f6', '#e8f2fb'] },
+    { title: 'Productivity', desc: 'Enhancing efficiency in cognitive and knowledge-intensive tasks.', bg: ['#bdd6f1', '#dcebf8'] },
+    { title: 'Creativity & Content', desc: 'Accelerating creativity through AI-driven audio, visual, & video content generation.', bg: ['#d7e7f7', '#ebf4fc'] },
+    { title: 'Insight Discovery', desc: 'Unlocking possibilities by AI-accelerated Data Science on structured & unstructured data together.', bg: ['#c3dbf3', '#dfeaf8'] },
   ] as const;
 
   const stats = [
-    { value: '100%', label: 'Replacement of Human worker', color: '#e57373' },
-    { value: '10x', label: 'More Real & Personalized', color: '#9fa8da' },
-    { value: '5x', label: 'Faster Execution', color: '#90caf9' },
-    { value: '7x', label: 'Faster Content Production', color: '#aed581' },
-    { value: '3x', label: 'More Insights Uncovered', color: '#ffb74d' },
+    { value: '100%', label: 'Replacement of Human worker', color: '#4e83c3' },
+    { value: '10x', label: 'More Real & Personalized', color: '#4e83c3'  },
+    { value: '5x', label: 'Faster Execution', color: '#4e83c3'  },
+    { value: '7x', label: 'Faster Content Production', color: '#4e83c3'  },
+    { value: '3x', label: 'More Insights Uncovered', color: '#4e83c3'  },
   ] as const;
 
   const strips = [
-    { text: 'Re-imagining Software Engineering with AI-Assisted Coding & Modernization → ', strong: '10x Engineers', color: '#00e5ff' },
+    { text: 'Re-imagining Software Engineering with AI-Assisted Coding & Modernization → ', strong: '10x Engineers', color: '#4e83c3' },
     { text: 'Advanced chain of thought Reasoning', strong: '', color: '' },
   ] as const;
 
@@ -66,8 +66,8 @@ export default function Slide10() {
           >
             {/* sheen */}
             <motion.div aria-hidden style={styles.sheenBase} {...sheenMotion(i)} />
-            <h3 style={{ margin: '0 0 8px 0', color: '#0b0b0b', fontWeight: 800 }}>{c.title}</h3>
-            <p style={{ fontSize: '0.95rem', margin: 0, color: '#111827' }}>{c.desc}</p>
+            <h3 style={{ margin: '0 0 8px 0', color: '#0b0b0b', fontWeight: 700,fontSize: '1.5rem' }}>{c.title}</h3>
+            <p style={{ fontSize: '1.3rem', margin: 0, color: '#111827',textAlign: 'left' as const }}>{c.desc}</p>
           </motion.div>
         ))}
       </div>

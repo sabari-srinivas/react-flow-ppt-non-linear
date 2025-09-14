@@ -1,3 +1,4 @@
+// THIS IS SLIDE2.BUNDLE.TSX
 // src/styles/slide2.bundle.tsx
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -14,6 +15,20 @@ export const styles = {
   },
   iconMargin: { marginBottom: '20px' },
   cardTitleMargin: { marginBottom: '15px' },
+
+  // NEW: bigger title text for "Learning / Reasoning / Self-correction"
+  cardTitleLarge: {
+    fontSize: '34px',
+    fontWeight: 600,
+    letterSpacing: '0.2px',
+    lineHeight: 1.25,
+  },
+
+  // NEW: bigger body text under each title
+  cardTextLarge: {
+    fontSize: '24px',
+    lineHeight: 1.6,
+  },
 };
 
 /* --------- Animations (exactly your configs) --------- */

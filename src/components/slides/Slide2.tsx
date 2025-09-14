@@ -1,3 +1,4 @@
+// THIS IS SLIDE2.TSX
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -33,8 +34,23 @@ const CardBox = ({
   >
     <motion.div {...hoverMotion}>
       <div style={styles.iconMargin}>{icon}</div>
-      <h3 style={{ ...cardTitleStyle, ...styles.cardTitleMargin }}>{title}</h3>
-      <p style={cardTextStyle}>{text}</p>
+      <h3
+        style={{
+          ...cardTitleStyle,
+          ...styles.cardTitleMargin,
+          ...styles.cardTitleLarge, // increased title size
+        }}
+      >
+        {title}
+      </h3>
+      <p
+        style={{
+          ...cardTextStyle,
+          ...styles.cardTextLarge, // increased body text size
+        }}
+      >
+        {text}
+      </p>
     </motion.div>
   </motion.div>
 );

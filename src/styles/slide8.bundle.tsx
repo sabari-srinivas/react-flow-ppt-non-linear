@@ -1,4 +1,4 @@
-// src/styles/whatsnew.bundle.tsx
+// src/styles/slide8.bundle.tsx
 "use client";
 
 import React from "react";
@@ -56,20 +56,20 @@ export const cardEnter = (delay: number) => ({
 /* ========== Styles (Nunito Sans + white bg + black text) ========== */
 export const styles = {
   root: {
-    backgroundColor: "#ffffff", // was #f8f9fa
+    backgroundColor: "#ffffff",
     padding: "40px 48px",
     display: "flex",
     flexDirection: "column" as const,
     alignItems: "center" as const,
     gap: 40,
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    color: "#000000", // default text color black
+    color: "#000000",
   },
   titleH2: {
     fontSize: "2.8rem",
-    color: "#4e83c3", // black
+    color: "#4e83c3",
     marginBottom: 10,
-    textAlign: "center" as const,
+    textAlign: "center" as const, // TITLE centered
   },
   row1: {
     display: "flex",
@@ -96,10 +96,10 @@ export const styles = {
     boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
     display: "flex",
     flexDirection: "column" as const,
-    alignItems: "center" as const,
+    alignItems: "stretch" as const,
     justifyContent: "flex-start" as const,
     padding: 24,
-    textAlign: "center" as const,
+    textAlign: "left" as const,            // LEFT align text
     border: "2px solid #4e83c3",
     minHeight: 260,
     margin: "0 auto",
@@ -118,6 +118,7 @@ export const styles = {
     background: "#ffffff",
     padding: 10,
     boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+    alignSelf: "center" as const,         // CENTER align image
   },
   modalBackdrop: {
     position: "fixed" as const,
@@ -137,6 +138,7 @@ export const styles = {
     position: "relative" as const,
     color: "#000000",
     fontFamily: "'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    textAlign: "left" as const,
   },
   closeBtn: {
     position: "absolute" as const,
@@ -152,26 +154,44 @@ export const styles = {
   },
   modalH3: {
     margin: 0,
-    fontSize: "1.55rem",
-    color: "#000000", // black
+    fontSize: "1.7rem",
+    color: "#000000",
     fontWeight: 700,
+    textAlign: "center" as const,          // TITLE centered
+    width: "100%",
   },
-  modalP: { marginTop: 6, color: "#000000" }, // black
+  modalP: { marginTop: 6, color: "#000000", textAlign: "left" as const, fontSize: "1.5rem" },
   exampleBox: {
     marginTop: 16,
     padding: 14,
     borderRadius: 12,
     background: "#f8fafc",
     border: "1px solid #e5e7eb",
+    textAlign: "left" as const,
+    fontSize: "1.6rem",
   },
-  exampleStrong: { color: "#000000" }, // black
-  exampleText: { marginTop: 6, color: "#000000" }, // black
-  stepsWrap: { marginTop: 18 },
-  stepsStrong: { color: "#000000" }, // black
-  stepsList: { marginTop: 8, color: "#000000", lineHeight: 1.55 }, // black
+  exampleStrong: { color: "#000000" },
+  exampleText: { marginTop: 6, color: "#000000", textAlign: "left" as const,fontSize: "1.4rem" },
+  stepsWrap: { marginTop: 18, textAlign: "left" as const,fontSize: "1.6rem" },
+  stepsStrong: { color: "#000000" },
+  stepsList: { marginTop: 8, color: "#000000", lineHeight: 1.55, textAlign: "left" as const,fontSize: "1.4rem" },
   stepsLi: { marginBottom: 6 },
-  cardTitle: { margin: 0, color: "#000000", fontSize: "1.4rem", fontWeight: 700, letterSpacing: 0.2 }, // black
-  cardDesc: { fontSize: "1rem", marginTop: 8, color: "#000000", lineHeight: 1.45 }, // black
+  cardTitle: {
+    margin: 0,
+    color: "#000000",
+    fontSize: "1.5rem",
+    fontWeight: 700,
+    letterSpacing: 0.2,
+    textAlign: "center" as const,          // TITLE centered
+    width: "100%",
+  },
+  cardDesc: {
+    fontSize: "1.3rem",
+    marginTop: 8,
+    color: "#000000",
+    lineHeight: 1.45,
+    textAlign: "left" as const,
+  },
 };
 
 /* ========== UI components (same visuals/animations) ========== */
